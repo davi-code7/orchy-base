@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "declaration": true,
     "paths": {
       "@config/*": ["./src/config/*"],
       "@controllers/*": ["./src/controllers/*"],
@@ -27,5 +28,6 @@
       "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": ["**/*", "__tests__"]
+  "include": ["**/*", "__tests__"],
+  "exclude": ["node_modules", "dist"]
 }
