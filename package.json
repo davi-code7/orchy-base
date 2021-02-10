@@ -1,20 +1,22 @@
 {
-  "name": "orchy-base",
+  "name": "orchy-base-code7",
   "version": "1.0.0",
-  "main": "index.js",
   "description": "Configures, sets up database models and implements CRUD methods.",
-  "source": "src/index.js",
   "author": "Davi Silva <davi.silva@code7.com>",
+  "source": "src/index.ts",
+  "main": "./dist/index.js",
   "bin": "./dist/index.js",
   "license": "MIT",
   "keywords": [
+    "orchy-base",
     "database",
     "database configuration"
   ],
   "repository": {
     "type": "git",
-    "url": "http"
+    "url": "https://github.com/davi-code7/orchy-base"
   },
+  "homepage": "https://github.com/davi-code7/orchy-base/#readme",
   "publishConfig": {
     "access": "public"
   },
