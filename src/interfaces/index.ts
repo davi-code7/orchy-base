@@ -107,6 +107,33 @@ export interface IContactData {
   updated_at: null | number;
 }
 
+export interface IContactUpdateData {
+  id_contact?: BigInt;
+  id_load?: BigInt;
+  name?: String;
+  key?: String;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface IContactDestroyData {
+  id_contact?: BigInt;
+  id_load?: BigInt;
+  name?: String;
+  key?: String;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface IContactGetData {
+  id_contact?: BigInt;
+  id_load?: BigInt;
+  name?: String;
+  key?: String;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
 export interface IContactDataReturn {
   id_contact: BigInt;
   id_load: number;
@@ -124,6 +151,36 @@ export interface IContactDataData {
   status: number;
   created_at: number;
   updated_at: null | number;
+}
+
+export interface IContactDataUpdateData {
+  id_contact_data?: BigInt;
+  id_contact?: BigInt;
+  contact_data?: String;
+  data_type?: number;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface IContactDataDestroyData {
+  id_contact_data?: BigInt;
+  id_contact?: BigInt;
+  contact_data?: String;
+  data_type?: number;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface IContactDataGetData {
+  id_contact_data?: BigInt;
+  id_contact?: BigInt;
+  contact_data?: String;
+  data_type?: number;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
 }
 
 export interface IContactDataDataReturn {
@@ -150,6 +207,21 @@ export interface ILoadInfoData {
   email: string;
   created_at: number;
   updated_at: null | number;
+}
+
+export interface ILoadInfoUpdateData {
+  id_flow?: string;
+  id_load?: string;
+  id_org?: string;
+  start?: number;
+  finish?: number;
+  schedule?: number;
+  contacts?: string;
+  telephones?: string;
+  telephones_ddd?: string[];
+  email?: string;
+  created_at?: number;
+  updated_at?: null | number;
 }
 
 export interface ILoadInfoDataReturn extends Document {
