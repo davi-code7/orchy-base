@@ -1,6 +1,7 @@
 import { Document } from 'mongoose';
 
 // Postgres
+// Queue
 export interface IQueueData {
   id_queue: BigInt;
   id_load: BigInt;
@@ -46,6 +47,7 @@ export interface IQueueReturn {
   updated_at: null | number;
 }
 
+// Load
 export interface ILoadData {
   id_load: BigInt;
   id_flow: String;
@@ -54,6 +56,36 @@ export interface ILoadData {
   active: Boolean;
   created_at: number;
   updated_at: null | number;
+}
+
+export interface ILoadUpdateData {
+  id_load?: BigInt;
+  id_flow?: String;
+  id_org?: String;
+  register?: number;
+  active?: Boolean;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface ILoadDestroyData {
+  id_load?: BigInt;
+  id_flow?: String;
+  id_org?: String;
+  register?: number;
+  active?: Boolean;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface ILoadGetData {
+  id_load?: BigInt;
+  id_flow?: String;
+  id_org?: String;
+  register?: number;
+  active?: Boolean;
+  created_at?: number;
+  updated_at?: null | number;
 }
 
 export interface ILoadDataReturn {

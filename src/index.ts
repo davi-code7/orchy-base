@@ -3,7 +3,10 @@ import './database';
 
 import { WhereOptions } from 'sequelize/types';
 import { error } from './utils/logger/logger';
-import { generateUpdateQueueObject } from './utils/generators/index';
+import {
+  generateUpdateQueueObject,
+  generateUpdateLoadObject,
+} from './utils/generators/index';
 import { connectMongoDB } from './config/database/mongoDb/index';
 
 import Queue from './models/postgres/Queue/Queue';
@@ -22,6 +25,9 @@ import {
   IQueueGetData,
   IQueueReturn,
   ILoadData,
+  ILoadUpdateData,
+  ILoadDestroyData,
+  ILoadGetData,
   ILoadDataReturn,
   IContactData,
   IContactDataReturn,
@@ -37,7 +43,7 @@ import {
 
 export default class OrchyBase {
   private queue: IQueueReturn | object | number | IQueueReturn[];
-  private load: ILoadDataReturn;
+  private load: ILoadDataReturn | object | number | ILoadDataReturn[];
   private contact: IContactDataReturn;
   private contactData: IContactDataDataReturn;
 
@@ -87,11 +93,27 @@ export default class OrchyBase {
     where: WhereOptions<IQueueDestroyData>,
   ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
     try {
-      const destroyedQueue = await Queue.destroy({
+      const destroyedQueue: number = await Queue.destroy({
         where,
       });
 
       this.queue = destroyedQueue;
+    } catch (err) {
+      error(err);
+    }
+
+    return this.queue;
+  }
+
+  async getQueue(
+    where: WhereOptions<IQueueGetData>,
+  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+    try {
+      const queue = await Queue.findOne({
+        where,
+      });
+
+      this.queue = queue.get();
     } catch (err) {
       error(err);
     }
@@ -123,24 +145,10 @@ export default class OrchyBase {
     return this.queue;
   }
 
-  async getQueue(
-    where: WhereOptions<IQueueGetData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
-    try {
-      const queue = await Queue.findOne({
-        where,
-      });
-
-      this.queue = queue.get();
-    } catch (err) {
-      error(err);
-    }
-
-    return this.queue;
-  }
-
   // Load methods
-  async createLoad(loadData: ILoadData): Promise<ILoadDataReturn> {
+  async createLoad(
+    loadData: ILoadData,
+  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
     try {
       const localNewLoad = await Load.create(loadData);
       this.load = localNewLoad.get();
@@ -148,6 +156,82 @@ export default class OrchyBase {
       error(err);
     }
     return this.load;
+  }
+
+  async updateLoad(
+    where: WhereOptions<ILoadUpdateData>,
+    loadDataToUpdate: ILoadUpdateData,
+  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    try {
+      const toUpdateData: ILoadUpdateData = generateUpdateLoadObject(
+        loadDataToUpdate,
+      );
+
+      const updatedLoad: object = await Load.update(toUpdateData, {
+        where,
+      });
+
+      this.load = updatedLoad;
+    } catch (err) {
+      error(err);
+    }
+    return this.load;
+  }
+
+  async deleteLoad(
+    where: WhereOptions<ILoadDestroyData>,
+  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    try {
+      const destroyedLoad: number = await Load.destroy({
+        where,
+      });
+
+      this.load = destroyedLoad;
+    } catch (err) {
+      error(err);
+    }
+
+    return this.load;
+  }
+
+  async getLoad(
+    where: WhereOptions<ILoadGetData>,
+  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    try {
+      const load = await Load.findOne({
+        where,
+      });
+
+      this.load = load.get();
+    } catch (err) {
+      error(err);
+    }
+
+    return this.load;
+  }
+
+  async getLoads(
+    where?: WhereOptions<ILoadGetData>,
+  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    try {
+      let loads: any;
+
+      if (!where) {
+        loads = await Queue.findAll();
+      } else {
+        loads = await Queue.findAll({
+          where,
+        });
+      }
+
+      const mapedQueues = loads.map((queue) => queue.get());
+
+      this.queue = mapedQueues;
+    } catch (err) {
+      error(err);
+    }
+
+    return this.queue;
   }
 
   // Contact methods
@@ -215,12 +299,12 @@ export default class OrchyBase {
   }
 }
 
-const orchybase = new OrchyBase();
+// const orchybase = new OrchyBase();
 
-async function test(num) {
-  console.log(await orchybase.updateQueue({ id_queue: 1 }, { status: 3 }));
-}
+// async function test(num) {
+//   console.log(await orchybase.updateQueue({ id_queue: 1 }, { status: 3 }));
+// }
 
-[1, 2, 3, 4, 5, 6, 7, 8].map(async (num, i) => {
-  test(num);
-});
+// [1, 2, 3, 4, 5, 6, 7, 8].map(async (num, i) => {
+//   test(num);
+// });
