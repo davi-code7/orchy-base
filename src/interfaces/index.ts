@@ -10,6 +10,33 @@ export interface IQueueData {
   updated_at: null | number;
 }
 
+export interface IQueueUpdateData {
+  id_queue?: BigInt;
+  id_load?: BigInt;
+  schedule?: number;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface IQueueDestroyData {
+  id_queue?: BigInt;
+  id_load?: BigInt;
+  schedule?: number;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface IQueueGetData {
+  id_queue?: BigInt;
+  id_load?: BigInt;
+  schedule?: number;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
 export interface IQueueReturn {
   id_queue: BigInt;
   id_load: number;
