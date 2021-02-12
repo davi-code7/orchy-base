@@ -5,6 +5,7 @@ import {
   IContactDataUpdateData,
   ILoadInfoUpdateData,
   ILoadStatusUpdateData,
+  IQueueContactUpdateData,
 } from '../../interfaces/index';
 
 // Postgres
@@ -215,6 +216,42 @@ export function generateUpdateLoadStatusDataObject(
   }
   if (loadInfoDataToUpdate.total) {
     toUpdateData.total = loadInfoDataToUpdate.total;
+  }
+  if (
+    loadInfoDataToUpdate.updated_at === null ||
+    loadInfoDataToUpdate.updated_at
+  ) {
+    toUpdateData.updated_at = loadInfoDataToUpdate.updated_at;
+  }
+
+  return toUpdateData;
+}
+
+export function generateUpdateQueueContactDataObject(
+  loadInfoDataToUpdate: IQueueContactUpdateData,
+): IQueueContactUpdateData {
+  const toUpdateData: IQueueContactUpdateData = {};
+
+  if (loadInfoDataToUpdate.created_at) {
+    toUpdateData.created_at = loadInfoDataToUpdate.created_at;
+  }
+  if (loadInfoDataToUpdate.contact_data) {
+    toUpdateData.contact_data = loadInfoDataToUpdate.contact_data;
+  }
+  if (loadInfoDataToUpdate.data_type) {
+    toUpdateData.data_type = loadInfoDataToUpdate.data_type;
+  }
+  if (loadInfoDataToUpdate.event_type) {
+    toUpdateData.event_type = loadInfoDataToUpdate.event_type;
+  }
+  if (loadInfoDataToUpdate.id_contact_data) {
+    toUpdateData.id_contact_data = loadInfoDataToUpdate.id_contact_data;
+  }
+  if (loadInfoDataToUpdate.schedule) {
+    toUpdateData.schedule = loadInfoDataToUpdate.schedule;
+  }
+  if (loadInfoDataToUpdate.status) {
+    toUpdateData.status = loadInfoDataToUpdate.status;
   }
   if (
     loadInfoDataToUpdate.updated_at === null ||

@@ -211,6 +211,20 @@ export interface ILoadInfoDestroyData {
     created_at?: number;
     updated_at?: null | number;
 }
+export interface ILoadInfoGetData {
+    id_flow?: string;
+    id_load?: string;
+    id_org?: string;
+    start?: number;
+    finish?: number;
+    schedule?: number;
+    contacts?: string;
+    telephones?: string;
+    telephones_ddd?: string[];
+    email?: string;
+    created_at?: number;
+    updated_at?: null | number;
+}
 export interface ILoadInfoDataReturn extends Document {
     _id: string;
     id_flow: string;
@@ -243,6 +257,60 @@ export interface ILoadStatusData {
     created_at: number;
     updated_at: null | number;
 }
+export interface ILoadStatusUpdateData {
+    _id?: string;
+    id_flow?: string;
+    id_load?: string;
+    id_org?: string;
+    start?: number;
+    finish?: number;
+    total?: string;
+    contact_total?: string;
+    telephone_total?: string;
+    email_total?: string;
+    contact_processed?: string;
+    telephone_processed?: string;
+    email_processed?: string;
+    created_at?: number;
+    updated_at?: null | number;
+    __v?: number;
+}
+export interface ILoadStatusDestroyData {
+    _id?: string;
+    id_flow?: string;
+    id_load?: string;
+    id_org?: string;
+    start?: number;
+    finish?: number;
+    total?: string;
+    contact_total?: string;
+    telephone_total?: string;
+    email_total?: string;
+    contact_processed?: string;
+    telephone_processed?: string;
+    email_processed?: string;
+    created_at?: number;
+    updated_at?: null | number;
+    __v?: number;
+}
+export interface ILoadStatusGetData {
+    _id?: string;
+    id_flow?: string;
+    id_load?: string;
+    id_org?: string;
+    start?: number;
+    finish?: number;
+    total?: string;
+    contact_total?: string;
+    telephone_total?: string;
+    email_total?: string;
+    contact_processed?: string;
+    telephone_processed?: string;
+    email_processed?: string;
+    created_at?: number;
+    updated_at?: null | number;
+    __v?: number;
+}
 export interface ILoadStatusDataReturn extends Document {
     _id: string;
     id_flow: string;
@@ -270,6 +338,42 @@ export interface IQueueContactData {
     status: number;
     created_at: number;
     updated_at: null | number;
+}
+export interface IQueueContactUpdateData {
+    _id?: string;
+    id_contact_data?: number;
+    schedule?: number;
+    event_type?: string;
+    data_type?: string;
+    contact_data?: string;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+    __v?: number;
+}
+export interface IQueueContactDestroyData {
+    _id: string;
+    id_contact_data?: number;
+    schedule?: number;
+    event_type?: string;
+    data_type?: string;
+    contact_data?: string;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+    __v?: number;
+}
+export interface IQueueContactGetData {
+    _id?: string;
+    id_contact_data?: number;
+    schedule?: number;
+    event_type?: string;
+    data_type?: string;
+    contact_data?: string;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+    __v?: number;
 }
 export interface IQueueContactDataReturn extends Document {
     _id: string;

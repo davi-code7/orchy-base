@@ -375,6 +375,45 @@ export interface IQueueContactData {
   updated_at: null | number;
 }
 
+export interface IQueueContactUpdateData {
+  _id?: string;
+  id_contact_data?: number;
+  schedule?: number;
+  event_type?: string;
+  data_type?: string;
+  contact_data?: string;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+  __v?: number;
+}
+
+export interface IQueueContactDestroyData {
+  _id: string;
+  id_contact_data?: number;
+  schedule?: number;
+  event_type?: string;
+  data_type?: string;
+  contact_data?: string;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+  __v?: number;
+}
+
+export interface IQueueContactGetData {
+  _id?: string;
+  id_contact_data?: number;
+  schedule?: number;
+  event_type?: string;
+  data_type?: string;
+  contact_data?: string;
+  status?: number;
+  created_at?: number;
+  updated_at?: null | number;
+  __v?: number;
+}
+
 export interface IQueueContactDataReturn extends Document {
   _id: string;
   id_contact_data: number;

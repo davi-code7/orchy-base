@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateUpdateLoadInfoDataObject = exports.generateUpdateContactDataObject = exports.generateUpdateContactObject = exports.generateUpdateLoadObject = exports.generateUpdateQueueObject = void 0;
+exports.generateUpdateQueueContactDataObject = exports.generateUpdateLoadStatusDataObject = exports.generateUpdateLoadInfoDataObject = exports.generateUpdateContactDataObject = exports.generateUpdateContactObject = exports.generateUpdateLoadObject = exports.generateUpdateQueueObject = void 0;
 function generateUpdateQueueObject(queueDataToUpdate) {
     const toUpdateData = {};
     if (queueDataToUpdate.created_at) {
@@ -143,3 +143,75 @@ function generateUpdateLoadInfoDataObject(loadInfoDataToUpdate) {
     return toUpdateData;
 }
 exports.generateUpdateLoadInfoDataObject = generateUpdateLoadInfoDataObject;
+function generateUpdateLoadStatusDataObject(loadInfoDataToUpdate) {
+    const toUpdateData = {};
+    if (loadInfoDataToUpdate.created_at) {
+        toUpdateData.created_at = loadInfoDataToUpdate.created_at;
+    }
+    if (loadInfoDataToUpdate.contact_processed) {
+        toUpdateData.contact_processed = loadInfoDataToUpdate.contact_processed;
+    }
+    if (loadInfoDataToUpdate.contact_total) {
+        toUpdateData.contact_total = loadInfoDataToUpdate.contact_total;
+    }
+    if (loadInfoDataToUpdate.finish) {
+        toUpdateData.finish = loadInfoDataToUpdate.finish;
+    }
+    if (loadInfoDataToUpdate.id_flow) {
+        toUpdateData.id_flow = loadInfoDataToUpdate.id_flow;
+    }
+    if (loadInfoDataToUpdate.id_load) {
+        toUpdateData.id_load = loadInfoDataToUpdate.id_load;
+    }
+    if (loadInfoDataToUpdate.id_org) {
+        toUpdateData.id_org = loadInfoDataToUpdate.id_org;
+    }
+    if (loadInfoDataToUpdate.telephone_processed) {
+        toUpdateData.telephone_processed = loadInfoDataToUpdate.telephone_processed;
+    }
+    if (loadInfoDataToUpdate.start) {
+        toUpdateData.start = loadInfoDataToUpdate.start;
+    }
+    if (loadInfoDataToUpdate.telephone_total) {
+        toUpdateData.telephone_total = loadInfoDataToUpdate.telephone_total;
+    }
+    if (loadInfoDataToUpdate.total) {
+        toUpdateData.total = loadInfoDataToUpdate.total;
+    }
+    if (loadInfoDataToUpdate.updated_at === null ||
+        loadInfoDataToUpdate.updated_at) {
+        toUpdateData.updated_at = loadInfoDataToUpdate.updated_at;
+    }
+    return toUpdateData;
+}
+exports.generateUpdateLoadStatusDataObject = generateUpdateLoadStatusDataObject;
+function generateUpdateQueueContactDataObject(loadInfoDataToUpdate) {
+    const toUpdateData = {};
+    if (loadInfoDataToUpdate.created_at) {
+        toUpdateData.created_at = loadInfoDataToUpdate.created_at;
+    }
+    if (loadInfoDataToUpdate.contact_data) {
+        toUpdateData.contact_data = loadInfoDataToUpdate.contact_data;
+    }
+    if (loadInfoDataToUpdate.data_type) {
+        toUpdateData.data_type = loadInfoDataToUpdate.data_type;
+    }
+    if (loadInfoDataToUpdate.event_type) {
+        toUpdateData.event_type = loadInfoDataToUpdate.event_type;
+    }
+    if (loadInfoDataToUpdate.id_contact_data) {
+        toUpdateData.id_contact_data = loadInfoDataToUpdate.id_contact_data;
+    }
+    if (loadInfoDataToUpdate.schedule) {
+        toUpdateData.schedule = loadInfoDataToUpdate.schedule;
+    }
+    if (loadInfoDataToUpdate.status) {
+        toUpdateData.status = loadInfoDataToUpdate.status;
+    }
+    if (loadInfoDataToUpdate.updated_at === null ||
+        loadInfoDataToUpdate.updated_at) {
+        toUpdateData.updated_at = loadInfoDataToUpdate.updated_at;
+    }
+    return toUpdateData;
+}
+exports.generateUpdateQueueContactDataObject = generateUpdateQueueContactDataObject;
