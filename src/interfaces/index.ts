@@ -288,6 +288,63 @@ export interface ILoadStatusData {
   updated_at: null | number;
 }
 
+export interface ILoadStatusUpdateData {
+  _id?: string;
+  id_flow?: string;
+  id_load?: string;
+  id_org?: string;
+  start?: number;
+  finish?: number;
+  total?: string;
+  contact_total?: string;
+  telephone_total?: string;
+  email_total?: string;
+  contact_processed?: string;
+  telephone_processed?: string;
+  email_processed?: string;
+  created_at?: number;
+  updated_at?: null | number;
+  __v?: number;
+}
+
+export interface ILoadStatusDestroyData {
+  _id?: string;
+  id_flow?: string;
+  id_load?: string;
+  id_org?: string;
+  start?: number;
+  finish?: number;
+  total?: string;
+  contact_total?: string;
+  telephone_total?: string;
+  email_total?: string;
+  contact_processed?: string;
+  telephone_processed?: string;
+  email_processed?: string;
+  created_at?: number;
+  updated_at?: null | number;
+  __v?: number;
+}
+
+export interface ILoadStatusGetData {
+  _id?: string;
+  id_flow?: string;
+  id_load?: string;
+  id_org?: string;
+  start?: number;
+  finish?: number;
+  total?: string;
+  contact_total?: string;
+  telephone_total?: string;
+  email_total?: string;
+  contact_processed?: string;
+  telephone_processed?: string;
+  email_processed?: string;
+  created_at?: number;
+  updated_at?: null | number;
+  __v?: number;
+}
+
 export interface ILoadStatusDataReturn extends Document {
   _id: string;
   id_flow: string;

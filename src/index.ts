@@ -9,6 +9,7 @@ import {
   generateUpdateContactObject,
   generateUpdateContactDataObject,
   generateUpdateLoadInfoDataObject,
+  generateUpdateLoadStatusDataObject,
 } from './utils/generators/index';
 import { connectMongoDB } from './config/database/mongoDb/index';
 
@@ -48,6 +49,9 @@ import {
   ILoadInfoGetData,
   ILoadInfoDataReturn,
   ILoadStatusData,
+  ILoadStatusUpdateData,
+  ILoadStatusDestroyData,
+  ILoadStatusGetData,
   ILoadStatusDataReturn,
   IQueueContactData,
   IQueueContactDataReturn,
@@ -69,7 +73,11 @@ export default class OrchyBase {
     | ILoadInfoDataReturn
     | ILoadInfoDataReturn
     | ILoadInfoDataReturn[];
-  private loadStatus: ILoadStatusDataReturn;
+  private loadStatus:
+    | ILoadStatusDataReturn
+    | ILoadStatusUpdateData
+    | object
+    | ILoadStatusGetData[];
   private queueContact: IQueueContactDataReturn;
 
   constructor() {
@@ -537,7 +545,7 @@ export default class OrchyBase {
   }
 
   async getLoadInfosData(
-    where?: IContactDataGetData,
+    where?: ILoadInfoGetData,
   ): Promise<
     | ILoadInfoDataReturn
     | object
@@ -565,7 +573,9 @@ export default class OrchyBase {
   // Load Status methods
   async createLoadStatus(
     loadStatusData: ILoadStatusData,
-  ): Promise<ILoadStatusDataReturn> {
+  ): Promise<
+    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
+  > {
     try {
       const newLoadStatus = new LoadStatus(loadStatusData);
       this.loadStatus = await newLoadStatus.save();
@@ -573,6 +583,85 @@ export default class OrchyBase {
       error(err);
     }
     return this.loadStatus;
+  }
+
+  async updateLoadStatus(
+    where: ILoadStatusUpdateData,
+    loadStatusDataToUpdate: ILoadStatusUpdateData,
+  ): Promise<any> {
+    try {
+      const toUpdateData: ILoadStatusUpdateData = generateUpdateLoadStatusDataObject(
+        loadStatusDataToUpdate,
+      );
+
+      const updatedLoadStatus: any = await LoadInfo.findOneAndUpdate(
+        where,
+        toUpdateData,
+        { runValidators: true },
+      );
+
+      console.log('updatedLoadStatus:', updatedLoadStatus);
+
+      this.loadStatus = updatedLoadStatus;
+    } catch (err) {
+      error(err);
+    }
+
+    this.loadStatus;
+  }
+
+  async deleteLoadStatus(
+    where: ILoadStatusDestroyData,
+  ): Promise<
+    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
+  > {
+    try {
+      const destroyedLoadStatus: ILoadStatusDestroyData = await LoadStatus.findOneAndDelete(
+        where,
+      );
+
+      console.log('destroyedLoadStatus:', destroyedLoadStatus);
+
+      this.loadStatus = destroyedLoadStatus;
+    } catch (err) {
+      error(err);
+    }
+
+    return this.loadStatus;
+  }
+
+  async getLoadStatus(where: ILoadInfoData): Promise<object> {
+    try {
+      const loadInfo = await LoadInfo.findOne(where);
+
+      this.loadInfo = loadInfo;
+    } catch (err) {
+      error(err);
+    }
+
+    return this.loadInfo;
+  }
+
+  async getLoadStatuses(
+    where?: ILoadStatusGetData,
+  ): Promise<
+    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
+  > {
+    try {
+      let loadInfosData: any;
+
+      if (!where) {
+        loadInfosData = await LoadInfo.find();
+      } else {
+        loadInfosData = await LoadInfo.find(where);
+      }
+
+      this.loadInfo = loadInfosData;
+    } catch (err) {
+      error(err);
+    }
+
+    return this.loadInfo;
   }
 
   // Queue Contact methods
@@ -592,9 +681,9 @@ export default class OrchyBase {
 const orchybase = new OrchyBase();
 
 async function test(num) {
-  orchybase.updateLoadInfo({ updated_at: null }, { updated_at: Date.now() });
+  orchybase.deleteLoadStatus({ _id: '6022d73a80416894daa59cdf' });
 }
 
-for (let i = 0; i < 200; i += 1) {
+for (let i = 0; i < 2; i += 1) {
   test(i);
 }

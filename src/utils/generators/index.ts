@@ -4,6 +4,7 @@ import {
   IContactUpdateData,
   IContactDataUpdateData,
   ILoadInfoUpdateData,
+  ILoadStatusUpdateData,
 } from '../../interfaces/index';
 
 // Postgres
@@ -166,6 +167,54 @@ export function generateUpdateLoadInfoDataObject(
   }
   if (loadInfoDataToUpdate.telephones_ddd) {
     toUpdateData.telephones_ddd = loadInfoDataToUpdate.telephones_ddd;
+  }
+  if (
+    loadInfoDataToUpdate.updated_at === null ||
+    loadInfoDataToUpdate.updated_at
+  ) {
+    toUpdateData.updated_at = loadInfoDataToUpdate.updated_at;
+  }
+
+  return toUpdateData;
+}
+
+export function generateUpdateLoadStatusDataObject(
+  loadInfoDataToUpdate: ILoadStatusUpdateData,
+): ILoadStatusUpdateData {
+  const toUpdateData: ILoadStatusUpdateData = {};
+
+  if (loadInfoDataToUpdate.created_at) {
+    toUpdateData.created_at = loadInfoDataToUpdate.created_at;
+  }
+  if (loadInfoDataToUpdate.contact_processed) {
+    toUpdateData.contact_processed = loadInfoDataToUpdate.contact_processed;
+  }
+  if (loadInfoDataToUpdate.contact_total) {
+    toUpdateData.contact_total = loadInfoDataToUpdate.contact_total;
+  }
+  if (loadInfoDataToUpdate.finish) {
+    toUpdateData.finish = loadInfoDataToUpdate.finish;
+  }
+  if (loadInfoDataToUpdate.id_flow) {
+    toUpdateData.id_flow = loadInfoDataToUpdate.id_flow;
+  }
+  if (loadInfoDataToUpdate.id_load) {
+    toUpdateData.id_load = loadInfoDataToUpdate.id_load;
+  }
+  if (loadInfoDataToUpdate.id_org) {
+    toUpdateData.id_org = loadInfoDataToUpdate.id_org;
+  }
+  if (loadInfoDataToUpdate.telephone_processed) {
+    toUpdateData.telephone_processed = loadInfoDataToUpdate.telephone_processed;
+  }
+  if (loadInfoDataToUpdate.start) {
+    toUpdateData.start = loadInfoDataToUpdate.start;
+  }
+  if (loadInfoDataToUpdate.telephone_total) {
+    toUpdateData.telephone_total = loadInfoDataToUpdate.telephone_total;
+  }
+  if (loadInfoDataToUpdate.total) {
+    toUpdateData.total = loadInfoDataToUpdate.total;
   }
   if (
     loadInfoDataToUpdate.updated_at === null ||
