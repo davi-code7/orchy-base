@@ -224,6 +224,36 @@ export interface ILoadInfoUpdateData {
   updated_at?: null | number;
 }
 
+export interface ILoadInfoDestroyData {
+  id_flow?: string;
+  id_load?: string;
+  id_org?: string;
+  start?: number;
+  finish?: number;
+  schedule?: number;
+  contacts?: string;
+  telephones?: string;
+  telephones_ddd?: string[];
+  email?: string;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
+export interface ILoadInfoGetData {
+  id_flow?: string;
+  id_load?: string;
+  id_org?: string;
+  start?: number;
+  finish?: number;
+  schedule?: number;
+  contacts?: string;
+  telephones?: string;
+  telephones_ddd?: string[];
+  email?: string;
+  created_at?: number;
+  updated_at?: null | number;
+}
+
 export interface ILoadInfoDataReturn extends Document {
   _id: string;
   id_flow: string;

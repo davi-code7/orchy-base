@@ -7,6 +7,30 @@ export interface IQueueData {
     created_at: number;
     updated_at: null | number;
 }
+export interface IQueueUpdateData {
+    id_queue?: BigInt;
+    id_load?: BigInt;
+    schedule?: number;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface IQueueDestroyData {
+    id_queue?: BigInt;
+    id_load?: BigInt;
+    schedule?: number;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface IQueueGetData {
+    id_queue?: BigInt;
+    id_load?: BigInt;
+    schedule?: number;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+}
 export interface IQueueReturn {
     id_queue: BigInt;
     id_load: number;
@@ -23,6 +47,33 @@ export interface ILoadData {
     active: Boolean;
     created_at: number;
     updated_at: null | number;
+}
+export interface ILoadUpdateData {
+    id_load?: BigInt;
+    id_flow?: String;
+    id_org?: String;
+    register?: number;
+    active?: Boolean;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface ILoadDestroyData {
+    id_load?: BigInt;
+    id_flow?: String;
+    id_org?: String;
+    register?: number;
+    active?: Boolean;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface ILoadGetData {
+    id_load?: BigInt;
+    id_flow?: String;
+    id_org?: String;
+    register?: number;
+    active?: Boolean;
+    created_at?: number;
+    updated_at?: null | number;
 }
 export interface ILoadDataReturn {
     id_load: BigInt;
@@ -41,6 +92,30 @@ export interface IContactData {
     created_at: number;
     updated_at: null | number;
 }
+export interface IContactUpdateData {
+    id_contact?: BigInt;
+    id_load?: BigInt;
+    name?: String;
+    key?: String;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface IContactDestroyData {
+    id_contact?: BigInt;
+    id_load?: BigInt;
+    name?: String;
+    key?: String;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface IContactGetData {
+    id_contact?: BigInt;
+    id_load?: BigInt;
+    name?: String;
+    key?: String;
+    created_at?: number;
+    updated_at?: null | number;
+}
 export interface IContactDataReturn {
     id_contact: BigInt;
     id_load: number;
@@ -57,6 +132,33 @@ export interface IContactDataData {
     status: number;
     created_at: number;
     updated_at: null | number;
+}
+export interface IContactDataUpdateData {
+    id_contact_data?: BigInt;
+    id_contact?: BigInt;
+    contact_data?: String;
+    data_type?: number;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface IContactDataDestroyData {
+    id_contact_data?: BigInt;
+    id_contact?: BigInt;
+    contact_data?: String;
+    data_type?: number;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface IContactDataGetData {
+    id_contact_data?: BigInt;
+    id_contact?: BigInt;
+    contact_data?: String;
+    data_type?: number;
+    status?: number;
+    created_at?: number;
+    updated_at?: null | number;
 }
 export interface IContactDataDataReturn {
     id_contact_data: BigInt;
@@ -80,6 +182,34 @@ export interface ILoadInfoData {
     email: string;
     created_at: number;
     updated_at: null | number;
+}
+export interface ILoadInfoUpdateData {
+    id_flow?: string;
+    id_load?: string;
+    id_org?: string;
+    start?: number;
+    finish?: number;
+    schedule?: number;
+    contacts?: string;
+    telephones?: string;
+    telephones_ddd?: string[];
+    email?: string;
+    created_at?: number;
+    updated_at?: null | number;
+}
+export interface ILoadInfoDestroyData {
+    id_flow?: string;
+    id_load?: string;
+    id_org?: string;
+    start?: number;
+    finish?: number;
+    schedule?: number;
+    contacts?: string;
+    telephones?: string;
+    telephones_ddd?: string[];
+    email?: string;
+    created_at?: number;
+    updated_at?: null | number;
 }
 export interface ILoadInfoDataReturn extends Document {
     _id: string;
