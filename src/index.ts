@@ -751,16 +751,3 @@ export default class OrchyBase {
     return this.queueContact;
   }
 }
-
-const orchybase = new OrchyBase();
-
-async function test(num) {
-  orchybase.updateQueueContact(
-    { _id: '6022db65bdca0399642f9737' },
-    { updated_at: Date.now() },
-  );
-}
-
-for (let i = 0; i < 2; i += 1) {
-  test(i);
-}
