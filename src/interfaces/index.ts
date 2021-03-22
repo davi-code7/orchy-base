@@ -36,6 +36,7 @@ export interface IQueueGetData {
   status?: number;
   created_at?: number;
   updated_at?: null | number;
+  limit: number | null;
 }
 
 export interface IQueueReturn {

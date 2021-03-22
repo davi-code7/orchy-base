@@ -161,6 +161,7 @@ export default class OrchyBase {
   }
 
   async getQueues(
+    limit: number | null,
     where?: WhereOptions<IQueueGetData>,
   ): Promise<IQueueReturn[]> {
     try {
@@ -175,10 +176,25 @@ export default class OrchyBase {
         });
       }
 
-      const mapedQueues: IQueueReturn[] = queues.map((queue) => ({
-        ...queue.get(),
-        load: queue.get().load.get(),
-      }));
+      let mapedQueues: IQueueReturn[] = [];
+
+      if (limit) {
+        if (limit <= queues.length) {
+          for (let i = 0; i < limit; i += 1) {
+            mapedQueues.push({
+              ...queues[i].get(),
+              load: queues[i].get().load.get(),
+            });
+          }
+        } else {
+          throw Error('The number of entries is less than the set limit.');
+        }
+      } else {
+        mapedQueues = queues.map((queue) => ({
+          ...queue.get(),
+          load: queue.get().load.get(),
+        }));
+      }
 
       this.queues = mapedQueues;
     } catch (err) {
@@ -254,6 +270,7 @@ export default class OrchyBase {
   }
 
   async getLoads(
+    limit: number | null,
     where?: WhereOptions<ILoadGetData>,
   ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
     try {
@@ -267,7 +284,23 @@ export default class OrchyBase {
         });
       }
 
-      const mapedLoads = loads.map((load) => load.get());
+      let mapedLoads: ILoadDataReturn[] = [];
+
+      if (limit) {
+        if (limit <= loads.length) {
+          for (let i = 0; i < limit; i += 1) {
+            mapedLoads.push({
+              ...loads[i].get(),
+            });
+          }
+        } else {
+          throw Error('The number of entries is less than the set limit.');
+        }
+      } else {
+        mapedLoads = loads.map((load) => ({
+          ...load.get(),
+        }));
+      }
 
       this.load = mapedLoads;
     } catch (err) {
@@ -352,8 +385,9 @@ export default class OrchyBase {
   }
 
   async getContacts(
+    limit: number | null,
     where?: WhereOptions<IContactGetData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
     try {
       let contacts: any;
 
@@ -384,17 +418,38 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContacts = contacts.map((contact) => {
-        const mappedContactData = contact.contact_data.map((contactData) => ({
-          ...contactData.get(),
-        }));
+      let mapedContacts: IContactDataReturn[] = [];
 
-        return {
-          ...contact.get(),
-          contact_data: mappedContactData,
-          load: contact.get().load.get(),
-        };
-      });
+      if (limit) {
+        if (limit <= contacts.length) {
+          for (let i = 0; i < limit; i += 1) {
+            const mapedContactData = contacts[i].contact_data.map(
+              (contactData) => ({
+                ...contactData.get(),
+              }),
+            );
+            mapedContacts.push({
+              ...contacts[i].get(),
+              contact_data: mapedContactData,
+              load: contacts[i].get().load.get(),
+            });
+          }
+        } else {
+          throw Error('The number of entries is less than the set limit.');
+        }
+      } else {
+        mapedContacts = contacts.map((contact) => {
+          const mapedContactData = contact.contact_data.map((contactData) => ({
+            ...contactData.get(),
+          }));
+
+          return {
+            ...contact.get(),
+            contact_data: mapedContactData,
+            load: contact.get().load.get(),
+          };
+        });
+      }
 
       this.contact = mapedContacts;
     } catch (err) {
@@ -481,6 +536,7 @@ export default class OrchyBase {
   }
 
   async getContactsData(
+    limit: number | null,
     where?: WhereOptions<IContactDataGetData>,
   ): Promise<
     IContactDataDataReturn | object | number | IContactDataDataReturn[]
@@ -496,11 +552,23 @@ export default class OrchyBase {
         });
       }
 
-      console.log('contactsData:', contactsData);
+      let mapedContactsData: IContactDataDataReturn[] = [];
 
-      const mapedContactsData = contactsData.map((contactData) =>
-        contactData.get(),
-      );
+      if (limit) {
+        if (limit <= contactsData.length) {
+          for (let i = 0; i < limit; i += 1) {
+            mapedContactsData.push({
+              ...contactsData[i].get(),
+            });
+          }
+        } else {
+          throw Error('The number of entries is less than the set limit.');
+        }
+      } else {
+        mapedContactsData = contactsData.map((contactData) => ({
+          ...contactData.get(),
+        }));
+      }
 
       this.contactData = mapedContactsData;
     } catch (err) {
@@ -597,6 +665,7 @@ export default class OrchyBase {
   }
 
   async getLoadInfosData(
+    limit: number | null,
     where?: ILoadInfoGetData,
   ): Promise<
     | ILoadInfoDataReturn
@@ -608,10 +677,18 @@ export default class OrchyBase {
     try {
       let loadInfosData: any;
 
-      if (!where) {
-        loadInfosData = await LoadInfo.find();
+      if (limit) {
+        if (!where) {
+          loadInfosData = await LoadInfo.find().limit(limit);
+        } else {
+          loadInfosData = await LoadInfo.find(where).limit(limit);
+        }
       } else {
-        loadInfosData = await LoadInfo.find(where);
+        if (!where) {
+          loadInfosData = await LoadInfo.find();
+        } else {
+          loadInfosData = await LoadInfo.find(where);
+        }
       }
 
       this.loadInfo = loadInfosData;
@@ -691,6 +768,7 @@ export default class OrchyBase {
   }
 
   async getLoadStatuses(
+    limit: number | null,
     where?: ILoadStatusGetData,
   ): Promise<
     ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
@@ -698,10 +776,18 @@ export default class OrchyBase {
     try {
       let loadStatusesData: any;
 
-      if (!where) {
-        loadStatusesData = await LoadInfo.find();
+      if (limit) {
+        if (!where) {
+          loadStatusesData = await LoadInfo.find().limit(limit);
+        } else {
+          loadStatusesData = await LoadInfo.find(where).limit(limit);
+        }
       } else {
-        loadStatusesData = await LoadInfo.find(where);
+        if (!where) {
+          loadStatusesData = await LoadInfo.find();
+        } else {
+          loadStatusesData = await LoadInfo.find(where);
+        }
       }
 
       this.loadStatus = loadStatusesData;
@@ -779,15 +865,24 @@ export default class OrchyBase {
   }
 
   async getQueueContacts(
+    limit: number | null,
     where?: IQueueContactGetData,
   ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
     try {
       let queueContactsData: any;
 
-      if (!where) {
-        queueContactsData = await QueueContact.find();
+      if (limit) {
+        if (!where) {
+          queueContactsData = await QueueContact.find().limit(limit);
+        } else {
+          queueContactsData = await QueueContact.find(where).limit(limit);
+        }
       } else {
-        queueContactsData = await QueueContact.find(where);
+        if (!where) {
+          queueContactsData = await QueueContact.find();
+        } else {
+          queueContactsData = await QueueContact.find(where);
+        }
       }
 
       this.queueContact = queueContactsData;
