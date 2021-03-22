@@ -6,6 +6,7 @@ class Queue extends Model {
       {
         id_queue: {
           type: DataTypes.BIGINT,
+          defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,

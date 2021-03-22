@@ -6,6 +6,7 @@ class ContactData extends Model {
       {
         id_contact_data: {
           type: DataTypes.BIGINT,
+          defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,
@@ -16,7 +17,7 @@ class ContactData extends Model {
           unique: false,
         },
         data_type: {
-          type: DataTypes.SMALLINT,
+          type: DataTypes.ENUM([ 'cell_phone', 'landline', 'email' ]),
           allowNull: false,
           unique: false,
         },
@@ -26,7 +27,7 @@ class ContactData extends Model {
           unique: false,
         },
         status: {
-          type: DataTypes.SMALLINT,
+          type: DataTypes.ENUM([ 'pending', 'sent', 'failured' ]),
           allowNull: false,
           unique: false,
         },

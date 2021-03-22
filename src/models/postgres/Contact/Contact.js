@@ -1,4 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
+// const uuid = require('uuidv4');
+
 
 class Contact extends Model {
   static init(sequelize) {
@@ -6,6 +8,7 @@ class Contact extends Model {
       {
         id_contact: {
           type: DataTypes.BIGINT,
+          defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,
@@ -45,8 +48,9 @@ class Contact extends Model {
 
   static associate(models) {
     this.hasOne(models.Load, { foreignKey: 'id_load', as: 'load' });
-    this.hasOne(models.ContactData, {
-      foreignKey: 'id_contact_data',
+    
+    this.hasMany(models.ContactData, {
+      foreignKey: 'id_contact',
       as: 'contact_data',
     });
   }
