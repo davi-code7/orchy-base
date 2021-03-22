@@ -147,8 +147,8 @@ export interface IContactDataData {
   id_contact_data: BigInt;
   id_contact: BigInt;
   contact_data: String;
-  data_type: number;
-  status: number;
+  data_type: 'cell_phone' | 'landline' | 'email';
+  status: 'pending' | 'sent' | 'failured';
   created_at: number;
   updated_at: null | number;
 }

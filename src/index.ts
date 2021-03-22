@@ -60,9 +60,11 @@ import {
   IQueueContactGetData,
   IQueueContactDataReturn,
 } from './interfaces/index';
+import { getConfigFileParsingDiagnostics } from 'typescript';
 
 export default class OrchyBase {
   private queue: IQueueReturn | object | number | IQueueReturn[];
+  private queues: IQueueReturn[];
   private load: ILoadDataReturn | object | number | ILoadDataReturn[];
   private contact: IContactDataReturn | object | number | IContactDataReturn[];
   private contactData:
@@ -147,9 +149,10 @@ export default class OrchyBase {
     try {
       const queue = await Queue.findOne({
         where,
+        include: { association: 'load' },
       });
 
-      this.queue = queue.get();
+      this.queue = { ...queue.get(), load: queue.get().load.get() };
     } catch (err) {
       error(err);
     }
@@ -159,26 +162,30 @@ export default class OrchyBase {
 
   async getQueues(
     where?: WhereOptions<IQueueGetData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  ): Promise<IQueueReturn[]> {
     try {
       let queues: any;
 
       if (!where) {
-        queues = await Queue.findAll();
+        queues = await Queue.findAll({ include: { association: 'load' } });
       } else {
         queues = await Queue.findAll({
           where,
+          include: { association: 'load' },
         });
       }
 
-      const mapedQueues = queues.map((queue) => queue.get());
+      const mapedQueues: IQueueReturn[] = queues.map((queue) => ({
+        ...queue.get(),
+        load: queue.get().load.get(),
+      }));
 
-      this.queue = mapedQueues;
+      this.queues = mapedQueues;
     } catch (err) {
       error(err);
     }
 
-    return this.queue;
+    return this.queues;
   }
 
   // Load methods
@@ -325,6 +332,15 @@ export default class OrchyBase {
     try {
       const contact = await Contact.findOne({
         where,
+        include: [
+          {
+            required: false,
+            model: ContactData,
+            as: 'contact_data',
+            attributes: ['contact_data', 'data_type', 'status'],
+          },
+          { association: 'load' },
+        ],
       });
 
       this.contact = contact.get();
@@ -341,24 +357,44 @@ export default class OrchyBase {
     try {
       let contacts: any;
 
-      if (!where) {        
+      if (!where) {
         contacts = await Contact.findAll({
-          include: [{
-            required: false,
-            model: ContactData,
-            as: 'contact_data',
-            attributes: ['contact_data','data_type','status']
-          }],
-      
-
+          include: [
+            {
+              required: false,
+              model: ContactData,
+              as: 'contact_data',
+              attributes: ['contact_data', 'data_type', 'status'],
+            },
+            { association: 'load' },
+          ],
         });
       } else {
         contacts = await Contact.findAll({
           where,
+          include: [
+            {
+              required: false,
+              model: ContactData,
+              as: 'contact_data',
+              attributes: ['contact_data', 'data_type', 'status'],
+            },
+            { association: 'load' },
+          ],
         });
       }
 
-      const mapedContacts = contacts.map((contact) => contact.get());
+      const mapedContacts = contacts.map((contact) => {
+        const mappedContactData = contact.contact_data.map((contactData) => ({
+          ...contactData.get(),
+        }));
+
+        return {
+          ...contact.get(),
+          contact_data: mappedContactData,
+          load: contact.get().load.get(),
+        };
+      });
 
       this.contact = mapedContacts;
     } catch (err) {
@@ -460,8 +496,10 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContactsData = contactsData.map(
-        (contactData) => contactData.get,
+      console.log('contactsData:', contactsData);
+
+      const mapedContactsData = contactsData.map((contactData) =>
+        contactData.get(),
       );
 
       this.contactData = mapedContactsData;
@@ -760,3 +798,81 @@ export default class OrchyBase {
     return this.queueContact;
   }
 }
+
+const orchybase = new OrchyBase();
+
+async function createLoadQueue() {
+  const load: any = await orchybase.createLoad({
+    id_load: BigInt(1),
+    id_flow: '1',
+    id_org: '1',
+    active: true,
+    register: Date.now(),
+    created_at: Date.now(),
+    updated_at: null,
+  });
+
+  const queue = await orchybase.createQueue({
+    id_queue: BigInt(1),
+    id_load: load.id_load,
+    schedule: Date.now(),
+    status: 1,
+    created_at: Date.now(),
+    updated_at: null,
+  });
+
+  console.log('load:', load);
+  console.log('queue:', queue);
+}
+
+async function getQueues() {
+  const queue: any = await orchybase.getQueue({ id_queue: 1 });
+  console.log('queues:', queue);
+}
+
+async function createContact() {
+  const load: any = await orchybase.getLoads();
+
+  const contact: any = await orchybase.createContact({
+    id_load: load[0].id_load,
+    key: '1',
+    name: 'Test',
+    id_contact: BigInt(1),
+    created_at: Date.now(),
+    updated_at: null,
+  });
+  console.log('contact:', contact);
+}
+
+async function getContacts() {
+  const contacts: any = await orchybase.getContacts();
+  console.log('contact:', contacts);
+}
+
+async function createContactData() {
+  const contact: any = await orchybase.getContacts();
+
+  console.log('contact:', contact[0].id_contact);
+
+  const contactData: any = await orchybase.createContactData({
+    id_contact_data: BigInt(1),
+    id_contact: contact[0].id_contact,
+    data_type: 'landline',
+    contact_data: '42393459',
+    status: 'sent',
+    created_at: Date.now(),
+    updated_at: null,
+  });
+}
+
+async function getContactsData() {
+  const contactsData: any = await orchybase.getContactsData();
+  console.log('contact:', contactsData);
+}
+
+// createLoadQueue();
+// getQueues();
+// createContactData();
+// getContactsData();
+// createContact();
+// getContacts();

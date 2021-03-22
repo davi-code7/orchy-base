@@ -17,7 +17,7 @@ class ContactData extends Model {
           unique: false,
         },
         data_type: {
-          type: DataTypes.ENUM([ 'cell_phone', 'landline', 'email' ]),
+          type: DataTypes.ENUM(['cell_phone', 'landline', 'email']),
           allowNull: false,
           unique: false,
         },
@@ -27,7 +27,7 @@ class ContactData extends Model {
           unique: false,
         },
         status: {
-          type: DataTypes.ENUM([ 'pending', 'sent', 'failured' ]),
+          type: DataTypes.ENUM(['pending', 'sent', 'failured']),
           allowNull: false,
           unique: false,
         },

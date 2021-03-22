@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 
-
 class Contact extends Model {
   static init(sequelize) {
     return super.init(
@@ -47,7 +46,7 @@ class Contact extends Model {
 
   static associate(models) {
     this.hasOne(models.Load, { foreignKey: 'id_load', as: 'load' });
-    
+
     this.hasMany(models.ContactData, {
       foreignKey: 'id_contact',
       as: 'contact_data',
