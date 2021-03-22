@@ -347,7 +347,6 @@ export default class OrchyBase {
             required: false,
             model: ContactData,
             as: 'contact_data',
-            attributes: ['contact_data','data_type','status']
           }],
       
 
