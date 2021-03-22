@@ -341,8 +341,17 @@ export default class OrchyBase {
     try {
       let contacts: any;
 
-      if (!where) {
-        contacts = await Contact.findAll();
+      if (!where) {        
+        contacts = await Contact.findAll({
+          include: [{
+            required: false,
+            model: ContactData,
+            as: 'contact_data',
+            attributes: ['contact_data','data_type','status']
+          }],
+      
+
+        });
       } else {
         contacts = await Contact.findAll({
           where,

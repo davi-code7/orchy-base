@@ -6,6 +6,7 @@ class Load extends Model {
       {
         id_load: {
           type: DataTypes.BIGINT,
+          defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,

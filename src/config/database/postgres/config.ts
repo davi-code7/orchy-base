@@ -6,6 +6,10 @@ module.exports = {
   password: process.env.ORCHYBASE_POSTGRES_PASSWORD,
   host: process.env.ORCHYBASE_POSTGRES_HOST,
   dialect: 'postgres',
+  additional : {
+    freezeTableName : true,
+    timestamps: false
+  },
   define: {
     timestamps: false,
     underscored: true,
