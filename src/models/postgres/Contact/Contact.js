@@ -1,5 +1,4 @@
 import { DataTypes, Model } from 'sequelize';
-// const uuid = require('uuidv4');
 
 
 class Contact extends Model {

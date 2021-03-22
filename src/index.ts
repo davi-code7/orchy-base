@@ -341,9 +341,7 @@ export default class OrchyBase {
     try {
       let contacts: any;
 
-      if (!where) {
-        console.log('entrou aqui');
-        
+      if (!where) {        
         contacts = await Contact.findAll({
           include: [{
             required: false,
