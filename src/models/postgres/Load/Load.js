@@ -55,7 +55,7 @@ class Load extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
+    this.hasMany(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
   }
 }
 

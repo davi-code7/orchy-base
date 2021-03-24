@@ -392,7 +392,7 @@ export default class OrchyBase {
       let contacts: any;
 
       if (!where) {
-        if (limit) {
+        if (limit) {          
           contacts = await Contact.findAll({
             limit,
             include: [
@@ -450,17 +450,19 @@ export default class OrchyBase {
       }
 
       const mapedContacts: IContactDataReturn[] = contacts.map((contact) => {
-        const mapedContactData = contact.contact_data.map((contactData) => ({
-          ...contactData.get(),
-        }));
+        if(contact.contact_data) {
+          const mapedContactData = contact.contact_data.map((contactData) => ({
+            ...contactData.get(),
+          }));
 
-        return {
-          ...contact.get(),
-          contact_data: mapedContactData,
-          load: contact.get().load.get(),
-        };
+          return {
+            ...contact.get(),
+            contact_data: mapedContactData,
+            load: contact.get().load ? contact.get().load.get(): null,
+          };
+        }
       });
-
+      
       this.contact = mapedContacts;
     } catch (err) {
       error(err);
