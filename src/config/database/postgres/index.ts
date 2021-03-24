@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize, Op } from 'sequelize';
 
 const connection: Sequelize = new Sequelize(
   process.env.ORCHYBASE_POSTGRES_DATABASE,
@@ -36,6 +36,15 @@ const connection: Sequelize = new Sequelize(
         /SequelizeConnectionTimedOutError/,
       ],
       max: 5,
+    },
+    operatorsAliases: {
+      $gt: Op.gt,
+      $lt: Op.lt,
+      $gte: Op.gte,
+      $lte: Op.lte,
+      $eq: Op.eq,
+      $or: Op.or,
+      $and: Op.and,
     },
   },
 );

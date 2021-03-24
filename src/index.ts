@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import './database';
 
+import { Op } from 'sequelize';
 import { WhereOptions } from 'sequelize/types';
 import { error } from './utils/logger/logger';
 import {
@@ -60,7 +61,6 @@ import {
   IQueueContactGetData,
   IQueueContactDataReturn,
 } from './interfaces/index';
-import { getConfigFileParsingDiagnostics } from 'typescript';
 
 export default class OrchyBase {
   private queue: IQueueReturn | object | number | IQueueReturn[];
@@ -165,6 +165,7 @@ export default class OrchyBase {
     where?: WhereOptions<IQueueGetData>,
   ): Promise<IQueueReturn[]> {
     try {
+      console.log('where:', where);
       let queues: any;
 
       if (!where) {

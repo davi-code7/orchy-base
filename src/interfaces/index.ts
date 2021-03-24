@@ -32,7 +32,11 @@ export interface IQueueDestroyData {
 export interface IQueueGetData {
   id_queue?: BigInt;
   id_load?: BigInt;
-  schedule?: number;
+  schedule?:
+    | number
+    | { $gt?: number; $lt?: number; $gte?: number; $lte?: number }
+    | { $or: { $gt?: number; $lt?: number; $gte?: number; $lte?: number } }
+    | { $and: { $gt?: number; $lt?: number; $gte?: number; $lte?: number } };
   status?: number;
   created_at?: number;
   updated_at?: null | number;
