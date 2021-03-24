@@ -168,33 +168,35 @@ export default class OrchyBase {
       let queues: any;
 
       if (!where) {
-        queues = await Queue.findAll({ include: { association: 'load' } });
-      } else {
-        queues = await Queue.findAll({
-          where,
-          include: { association: 'load' },
-        });
-      }
-
-      let mapedQueues: IQueueReturn[] = [];
-
-      if (limit) {
-        if (limit <= queues.length) {
-          for (let i = 0; i < limit; i += 1) {
-            mapedQueues.push({
-              ...queues[i].get(),
-              load: queues[i].get().load.get(),
-            });
-          }
+        if (limit) {
+          queues = await Queue.findAll({
+            include: { association: 'load' },
+            limit,
+          });
         } else {
-          throw Error('The number of entries is less than the set limit.');
+          queues = await Queue.findAll({
+            include: { association: 'load' },
+          });
         }
       } else {
-        mapedQueues = queues.map((queue) => ({
-          ...queue.get(),
-          load: queue.get().load.get(),
-        }));
+        if (limit) {
+          queues = await Queue.findAll({
+            where,
+            include: { association: 'load' },
+            limit,
+          });
+        } else {
+          queues = await Queue.findAll({
+            where,
+            include: { association: 'load' },
+          });
+        }
       }
+
+      const mapedQueues: IQueueReturn[] = queues.map((queue) => ({
+        ...queue.get(),
+        load: queue.get().load.get(),
+      }));
 
       this.queues = mapedQueues;
     } catch (err) {
@@ -277,30 +279,27 @@ export default class OrchyBase {
       let loads: any;
 
       if (!where) {
-        loads = await Load.findAll();
-      } else {
-        loads = await Load.findAll({
-          where,
-        });
-      }
-
-      let mapedLoads: ILoadDataReturn[] = [];
-
-      if (limit) {
-        if (limit <= loads.length) {
-          for (let i = 0; i < limit; i += 1) {
-            mapedLoads.push({
-              ...loads[i].get(),
-            });
-          }
+        if (limit) {
+          loads = await Load.findAll({ limit });
         } else {
-          throw Error('The number of entries is less than the set limit.');
+          loads = await Load.findAll();
         }
       } else {
-        mapedLoads = loads.map((load) => ({
-          ...load.get(),
-        }));
+        if (limit) {
+          loads = await Load.findAll({
+            where,
+            limit,
+          });
+        } else {
+          loads = await Load.findAll({
+            where,
+          });
+        }
       }
+
+      const mapedLoads: ILoadDataReturn[] = loads.map((load) => ({
+        ...load.get(),
+      }));
 
       this.load = mapedLoads;
     } catch (err) {
@@ -392,64 +391,74 @@ export default class OrchyBase {
       let contacts: any;
 
       if (!where) {
-        contacts = await Contact.findAll({
-          include: [
-            {
-              required: false,
-              model: ContactData,
-              as: 'contact_data',
-              attributes: ['contact_data', 'data_type', 'status'],
-            },
-            { association: 'load' },
-          ],
-        });
-      } else {
-        contacts = await Contact.findAll({
-          where,
-          include: [
-            {
-              required: false,
-              model: ContactData,
-              as: 'contact_data',
-              attributes: ['contact_data', 'data_type', 'status'],
-            },
-            { association: 'load' },
-          ],
-        });
-      }
-
-      let mapedContacts: IContactDataReturn[] = [];
-
-      if (limit) {
-        if (limit <= contacts.length) {
-          for (let i = 0; i < limit; i += 1) {
-            const mapedContactData = contacts[i].contact_data.map(
-              (contactData) => ({
-                ...contactData.get(),
-              }),
-            );
-            mapedContacts.push({
-              ...contacts[i].get(),
-              contact_data: mapedContactData,
-              load: contacts[i].get().load.get(),
-            });
-          }
+        if (limit) {
+          contacts = await Contact.findAll({
+            limit,
+            include: [
+              {
+                required: false,
+                model: ContactData,
+                as: 'contact_data',
+                attributes: ['contact_data', 'data_type', 'status'],
+              },
+              { association: 'load' },
+            ],
+          });
         } else {
-          throw Error('The number of entries is less than the set limit.');
+          contacts = await Contact.findAll({
+            include: [
+              {
+                required: false,
+                model: ContactData,
+                as: 'contact_data',
+                attributes: ['contact_data', 'data_type', 'status'],
+              },
+              { association: 'load' },
+            ],
+          });
         }
       } else {
-        mapedContacts = contacts.map((contact) => {
-          const mapedContactData = contact.contact_data.map((contactData) => ({
-            ...contactData.get(),
-          }));
-
-          return {
-            ...contact.get(),
-            contact_data: mapedContactData,
-            load: contact.get().load.get(),
-          };
-        });
+        if (limit) {
+          contacts = await Contact.findAll({
+            where,
+            limit,
+            include: [
+              {
+                required: false,
+                model: ContactData,
+                as: 'contact_data',
+                attributes: ['contact_data', 'data_type', 'status'],
+              },
+              { association: 'load' },
+            ],
+          });
+        } else {
+          contacts = await Contact.findAll({
+            where,
+            include: [
+              {
+                required: false,
+                model: ContactData,
+                as: 'contact_data',
+                attributes: ['contact_data', 'data_type', 'status'],
+              },
+              { association: 'load' },
+            ],
+          });
+        }
       }
+
+      const mapedContacts: IContactDataReturn[] = contacts.map((contact) => {
+        const mapedContactData = contact.contact_data.map((contactData) => ({
+          ...contactData.get(),
+        }));
+
+        return {
+          ...contact.get(),
+          contact_data: mapedContactData,
+          load: contact.get().load.get(),
+        };
+      });
 
       this.contact = mapedContacts;
     } catch (err) {
@@ -545,30 +554,29 @@ export default class OrchyBase {
       let contactsData: any;
 
       if (!where) {
-        contactsData = await Contact.findAll();
-      } else {
-        contactsData = await Contact.findAll({
-          where,
-        });
-      }
-
-      let mapedContactsData: IContactDataDataReturn[] = [];
-
-      if (limit) {
-        if (limit <= contactsData.length) {
-          for (let i = 0; i < limit; i += 1) {
-            mapedContactsData.push({
-              ...contactsData[i].get(),
-            });
-          }
+        if (limit) {
+          contactsData = await Contact.findAll({ limit });
         } else {
-          throw Error('The number of entries is less than the set limit.');
+          contactsData = await Contact.findAll();
         }
       } else {
-        mapedContactsData = contactsData.map((contactData) => ({
-          ...contactData.get(),
-        }));
+        if (limit) {
+          contactsData = await Contact.findAll({
+            where,
+            limit,
+          });
+        } else {
+          contactsData = await Contact.findAll({
+            where,
+          });
+        }
       }
+
+      const mapedContactsData: IContactDataDataReturn[] = contactsData.map(
+        (contactData) => ({
+          ...contactData.get(),
+        }),
+      );
 
       this.contactData = mapedContactsData;
     } catch (err) {
