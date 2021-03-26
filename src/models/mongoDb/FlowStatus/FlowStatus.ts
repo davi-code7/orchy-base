@@ -1,11 +1,7 @@
 import mongoose from 'mongoose';
-import { ILoadStatus } from '../../../interfaces/models/mongoDb';
+import { IFlowStatus } from '../../../interfaces/models/mongoDb';
 
-const LoadStatusSchema = new mongoose.Schema({
-  id_flow: {
-    type: String,
-    required: true,
-  },
+const FlowStatusSchema = new mongoose.Schema({
   id_load: {
     type: Number,
     required: true,
@@ -14,11 +10,19 @@ const LoadStatusSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  start: {
-    type: Date,
+  id_flow: {
+    type: String,
     required: true,
   },
-  finish: {
+  name: {
+    type: String,
+    required: true,
+  },
+  id_item: {
+    type: String,
+    required: true,
+  },
+  register: {
     type: Date,
     required: true,
   },
@@ -26,27 +30,19 @@ const LoadStatusSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  contact_total: {
+  sent: {
     type: Number,
     required: true,
   },
-  telephone_total: {
+  delivered: {
     type: Number,
     required: true,
   },
-  email_total: {
+  read: {
     type: Number,
     required: true,
   },
-  contact_processed: {
-    type: Number,
-    required: true,
-  },
-  telephone_processed: {
-    type: Number,
-    required: true,
-  },
-  email_processed: {
+  answered: {
     type: Number,
     required: true,
   },
@@ -61,6 +57,6 @@ const LoadStatusSchema = new mongoose.Schema({
   },
 });
 
-const LoadStatus = mongoose.model<ILoadStatus>('LoadStatus', LoadStatusSchema);
+const FlowStatus = mongoose.model<IFlowStatus>('FlowStatus', FlowStatusSchema);
 
-export default LoadStatus;
+export default FlowStatus;

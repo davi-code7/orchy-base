@@ -1,23 +1,14 @@
 import 'dotenv/config';
 import './database';
 
-import { Op } from 'sequelize';
 import { WhereOptions } from 'sequelize/types';
+import { FilterQuery } from 'mongoose';
 import { error } from './utils/logger/logger';
-import {
-  generateUpdateQueueObject,
-  generateUpdateLoadObject,
-  generateUpdateContactObject,
-  generateUpdateContactDataObject,
-  generateUpdateLoadInfoDataObject,
-  generateUpdateLoadStatusDataObject,
-  generateUpdateQueueContactDataObject,
-} from './utils/generators/index';
+
 import { connectMongoDB } from './config/database/mongoDb/index';
 
 import Queue from './models/postgres/Queue/Queue';
 import Load from './models/postgres/Load/Load';
-import ContactData from './models/postgres/ContactData/ContactData';
 import Contact from './models/postgres/Contact/Contact';
 
 import LoadInfo from './models/mongoDb/LoadInfo/LoadInfo';
@@ -25,69 +16,65 @@ import LoadStatus from './models/mongoDb/LoadStatus/LoadStatus';
 import QueueContact from './models/mongoDb/QueueContact/QueueContact';
 
 import {
-  IQueueData,
-  IQueueUpdateData,
-  IQueueDestroyData,
-  IQueueGetData,
+  ICreateQueue,
+  IUpdateQueue,
+  IDeleteQueue,
+  IGetQueue,
   IQueueReturn,
-  ILoadData,
-  ILoadUpdateData,
-  ILoadDestroyData,
-  ILoadGetData,
-  ILoadDataReturn,
-  IContactData,
-  IContactUpdateData,
-  IContactDestroyData,
+  ICreateLoad,
+  IUpdateLoad,
+  IDeleteLoad,
+  IGetLoad,
+  ILoadReturn,
+  ICreateContact,
+  IUpdateContact,
+  IDeleteContact,
   IContactGetData,
-  IContactDataReturn,
-  IContactDataData,
-  IContactDataUpdateData,
-  IContactDataDestroyData,
-  IContactDataGetData,
-  IContactDataDataReturn,
-  ILoadInfoData,
-  ILoadInfoUpdateData,
-  ILoadInfoDestroyData,
-  ILoadInfoGetData,
-  ILoadInfoDataReturn,
-  ILoadStatusData,
-  ILoadStatusUpdateData,
-  ILoadStatusDestroyData,
-  ILoadStatusGetData,
-  ILoadStatusDataReturn,
-  IQueueContactData,
-  IQueueContactUpdateData,
-  IQueueContactDestroyData,
-  IQueueContactGetData,
-  IQueueContactDataReturn,
+  IContactReturn,
+  ICreateLoadInfo,
+  IUpdateLoadInfo,
+  IDeleteLoadInfo,
+  IGetLoadInfo,
+  ICreateLoadStatus,
+  IUpdateLoadStatus,
+  IDeleteLoadStatus,
+  IGetLoadStatus,
+  ICreateQueueContact,
+  IUpdateQueueContact,
+  IDeleteQueueContact,
+  IGetQueueContact,
 } from './interfaces/index';
 
 export default class OrchyBase {
-  private queue: IQueueReturn | object | number | IQueueReturn[];
+  private queue: ICreateQueue;
+  private updatedQueues: object;
+  private deletedQueues: number;
   private queues: IQueueReturn[];
-  private load: ILoadDataReturn | object | number | ILoadDataReturn[];
-  private contact: IContactDataReturn | object | number | IContactDataReturn[];
-  private contactData:
-    | IContactDataDataReturn
-    | object
-    | number
-    | IContactDataDataReturn[];
 
-  private loadInfo:
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[];
-  private loadStatus:
-    | ILoadStatusDataReturn
-    | ILoadStatusUpdateData
-    | object
-    | ILoadStatusGetData[];
-  private queueContact:
-    | object
-    | IQueueContactDataReturn
-    | IQueueContactDataReturn[];
+  private load: ICreateLoad;
+  private updatedLoads: object;
+  private deletedLoads: number;
+  private loads: ILoadReturn[];
+
+  private contact: ICreateContact;
+  private updatedContacts: object;
+  private deletedContacts: number;
+  private contacts: IContactReturn[];
+
+  private loadInfo: ICreateLoadInfo;
+  private updatedLoadInfo: IUpdateLoadInfo | null;
+  private deletedLoadInfo: IDeleteLoadInfo | null;
+  private loadInfos: IGetLoadInfo[];
+
+  private loadStatus: ICreateLoadStatus;
+  private updatedLoadStatus: IUpdateLoadStatus | null;
+  private deletedLoadStatus: IDeleteLoadStatus | null;
+  private loadStatuses: IGetLoadStatus[];
+
+  private queueContact: ICreateQueueContact;
+  private updatedQueueContact: IUpdateQueueContact | null;
+  private deletedQueueContact: IDeleteQueueContact | null;
+  private queueContacts: IGetQueueContact[];
 
   constructor() {
     connectMongoDB();
@@ -95,9 +82,7 @@ export default class OrchyBase {
 
   // Postgres
   // Queue methods
-  async createQueue(
-    queueData: IQueueData,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  async createQueue(queueData: ICreateQueue): Promise<ICreateQueue> {
     try {
       const localNewQueue = await Queue.create(queueData);
       this.queue = localNewQueue.get();
@@ -108,44 +93,36 @@ export default class OrchyBase {
   }
 
   async updateQueue(
-    where: WhereOptions<IQueueUpdateData>,
-    queueDataToUpdate: IQueueUpdateData,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+    where: WhereOptions<IUpdateQueue>,
+    queueDataToUpdate: IUpdateQueue,
+  ): Promise<object> {
     try {
-      const toUpdateData: IQueueUpdateData = generateUpdateQueueObject(
-        queueDataToUpdate,
-      );
-
-      const updatedQueue = await Queue.update(toUpdateData, {
+      const updatedQueue = await Queue.update(queueDataToUpdate, {
         where,
       });
 
-      this.queue = updatedQueue;
+      this.updatedQueues = updatedQueue;
     } catch (err) {
       error(err);
     }
-    return this.queue;
+    return this.updatedQueues;
   }
 
-  async deleteQueue(
-    where: WhereOptions<IQueueDestroyData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  async deleteQueue(where: WhereOptions<IDeleteQueue>): Promise<number> {
     try {
       const destroyedQueue: number = await Queue.destroy({
         where,
       });
 
-      this.queue = destroyedQueue;
+      this.deletedQueues = destroyedQueue;
     } catch (err) {
       error(err);
     }
 
-    return this.queue;
+    return this.deletedQueues;
   }
 
-  async getQueue(
-    where: WhereOptions<IQueueGetData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  async getQueue(where: WhereOptions<IGetQueue>): Promise<ICreateQueue> {
     try {
       const queue = await Queue.findOne({
         where,
@@ -162,7 +139,7 @@ export default class OrchyBase {
 
   async getQueues(
     limit: number | null,
-    where?: WhereOptions<IQueueGetData>,
+    where?: WhereOptions<IGetQueue>,
   ): Promise<IQueueReturn[]> {
     try {
       console.log('where:', where);
@@ -179,19 +156,17 @@ export default class OrchyBase {
             include: { association: 'load' },
           });
         }
+      } else if (limit) {
+        queues = await Queue.findAll({
+          where,
+          include: { association: 'load' },
+          limit,
+        });
       } else {
-        if (limit) {
-          queues = await Queue.findAll({
-            where,
-            include: { association: 'load' },
-            limit,
-          });
-        } else {
-          queues = await Queue.findAll({
-            where,
-            include: { association: 'load' },
-          });
-        }
+        queues = await Queue.findAll({
+          where,
+          include: { association: 'load' },
+        });
       }
 
       const mapedQueues: IQueueReturn[] = queues.map((queue) => ({
@@ -208,9 +183,7 @@ export default class OrchyBase {
   }
 
   // Load methods
-  async createLoad(
-    loadData: ILoadData,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  async createLoad(loadData: ICreateLoad): Promise<ICreateLoad> {
     try {
       const localNewLoad = await Load.create(loadData);
       this.load = localNewLoad.get();
@@ -221,44 +194,36 @@ export default class OrchyBase {
   }
 
   async updateLoad(
-    where: WhereOptions<ILoadUpdateData>,
-    loadDataToUpdate: ILoadUpdateData,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    where: WhereOptions<IUpdateLoad>,
+    loadDataToUpdate: IUpdateLoad,
+  ): Promise<object> {
     try {
-      const toUpdateData: ILoadUpdateData = generateUpdateLoadObject(
-        loadDataToUpdate,
-      );
-
-      const updatedLoad: object = await Load.update(toUpdateData, {
+      const updatedLoad: object = await Load.update(loadDataToUpdate, {
         where,
       });
 
-      this.load = updatedLoad;
+      this.updatedLoads = updatedLoad;
     } catch (err) {
       error(err);
     }
-    return this.load;
+    return this.updatedLoads;
   }
 
-  async deleteLoad(
-    where: WhereOptions<ILoadDestroyData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  async deleteLoad(where: WhereOptions<IDeleteLoad>): Promise<number> {
     try {
       const destroyedLoad: number = await Load.destroy({
         where,
       });
 
-      this.load = destroyedLoad;
+      this.deletedLoads = destroyedLoad;
     } catch (err) {
       error(err);
     }
 
-    return this.load;
+    return this.deletedLoads;
   }
 
-  async getLoad(
-    where: WhereOptions<ILoadGetData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  async getLoad(where: WhereOptions<IGetLoad>): Promise<ICreateLoad> {
     try {
       const load = await Load.findOne({
         where,
@@ -274,8 +239,8 @@ export default class OrchyBase {
 
   async getLoads(
     limit: number | null,
-    where?: WhereOptions<ILoadGetData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    where?: WhereOptions<IGetLoad>,
+  ): Promise<ILoadReturn[]> {
     try {
       let loads: any;
 
@@ -285,35 +250,37 @@ export default class OrchyBase {
         } else {
           loads = await Load.findAll();
         }
+      } else if (limit) {
+        loads = await Load.findAll({
+          where,
+          limit,
+        });
       } else {
-        if (limit) {
-          loads = await Load.findAll({
-            where,
-            limit,
-          });
-        } else {
-          loads = await Load.findAll({
-            where,
-          });
-        }
+        loads = await Load.findAll({
+          where,
+        });
       }
 
-      const mapedLoads: ILoadDataReturn[] = loads.map((load) => ({
+      const mapedLoads: ILoadReturn[] = loads.map((load) => ({
         ...load.get(),
       }));
 
-      this.load = mapedLoads;
+      this.loads = mapedLoads;
     } catch (err) {
       error(err);
     }
 
-    return this.load;
+    return this.loads;
   }
 
+  // Contact Complement methods
+
+  // Contact Email methods
+
+  // Contact Phone methods
+
   // Contact methods
-  async createContact(
-    contactData: IContactData,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  async createContact(contactData: ICreateContact): Promise<ICreateContact> {
     try {
       const localNewContact = await Contact.create(contactData);
       this.contact = localNewContact.get();
@@ -324,51 +291,45 @@ export default class OrchyBase {
   }
 
   async updateContact(
-    where: WhereOptions<IContactUpdateData>,
-    contactDataToUpdate: IContactUpdateData,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+    where: WhereOptions<IUpdateContact>,
+    contactDataToUpdate: IUpdateContact,
+  ): Promise<object> {
     try {
-      const toUpdateData: IContactUpdateData = generateUpdateContactObject(
-        contactDataToUpdate,
-      );
-
-      const updatedContact: object = await Contact.update(toUpdateData, {
+      const updatedContact: object = await Contact.update(contactDataToUpdate, {
         where,
       });
 
-      this.contact = updatedContact;
+      this.updatedContacts = updatedContact;
     } catch (err) {
       error(err);
     }
-    return this.contact;
+    return this.updatedContacts;
   }
 
-  async deleteContact(
-    where: WhereOptions<IContactDestroyData>,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  async deleteContact(where: WhereOptions<IDeleteContact>): Promise<number> {
     try {
       const destroyedContact: number = await Contact.destroy({
         where,
       });
 
-      this.contact = destroyedContact;
+      this.deletedContacts = destroyedContact;
     } catch (err) {
       error(err);
     }
 
-    return this.contact;
+    return this.deletedContacts;
   }
 
   async getContact(
     where: WhereOptions<IContactGetData>,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  ): Promise<ICreateContact> {
     try {
       const contact = await Contact.findOne({
         where,
         include: [
           {
             required: false,
-            model: ContactData,
+            model: Contact,
             as: 'contact_data',
             attributes: ['contact_data', 'data_type', 'status'],
           },
@@ -387,7 +348,7 @@ export default class OrchyBase {
   async getContacts(
     limit: number | null,
     where?: WhereOptions<IContactGetData>,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  ): Promise<IContactReturn[]> {
     try {
       let contacts: any;
 
@@ -398,7 +359,7 @@ export default class OrchyBase {
             include: [
               {
                 required: false,
-                model: ContactData,
+                model: Contact,
                 as: 'contact_data',
                 attributes: ['contact_data', 'data_type', 'status'],
               },
@@ -410,7 +371,7 @@ export default class OrchyBase {
             include: [
               {
                 required: false,
-                model: ContactData,
+                model: Contact,
                 as: 'contact_data',
                 attributes: ['contact_data', 'data_type', 'status'],
               },
@@ -418,38 +379,36 @@ export default class OrchyBase {
             ],
           });
         }
+      } else if (limit) {
+        contacts = await Contact.findAll({
+          where,
+          limit,
+          include: [
+            {
+              required: false,
+              model: Contact,
+              as: 'contact_data',
+              attributes: ['contact_data', 'data_type', 'status'],
+            },
+            { association: 'load' },
+          ],
+        });
       } else {
-        if (limit) {
-          contacts = await Contact.findAll({
-            where,
-            limit,
-            include: [
-              {
-                required: false,
-                model: ContactData,
-                as: 'contact_data',
-                attributes: ['contact_data', 'data_type', 'status'],
-              },
-              { association: 'load' },
-            ],
-          });
-        } else {
-          contacts = await Contact.findAll({
-            where,
-            include: [
-              {
-                required: false,
-                model: ContactData,
-                as: 'contact_data',
-                attributes: ['contact_data', 'data_type', 'status'],
-              },
-              { association: 'load' },
-            ],
-          });
-        }
+        contacts = await Contact.findAll({
+          where,
+          include: [
+            {
+              required: false,
+              model: Contact,
+              as: 'contact_data',
+              attributes: ['contact_data', 'data_type', 'status'],
+            },
+            { association: 'load' },
+          ],
+        });
       }
 
-      const mapedContacts: IContactDataReturn[] = contacts.map((contact) => {
+      const mapedContacts: IContactReturn[] = contacts.map((contact) => {
         const mapedContactData = contact.contact_data.map((contactData) => ({
           ...contactData.get(),
         }));
@@ -461,143 +420,19 @@ export default class OrchyBase {
         };
       });
 
-      this.contact = mapedContacts;
+      this.contacts = mapedContacts;
     } catch (err) {
       error(err);
     }
 
-    return this.contact;
-  }
-
-  // Contact Data methods
-  async createContactData(
-    contactDataData: IContactDataData,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const localNewContactData = await ContactData.create(contactDataData);
-      this.contactData = localNewContactData.get();
-    } catch (err) {
-      error(err);
-    }
-    return this.contactData;
-  }
-
-  async updateContactData(
-    where: WhereOptions<IContactDataUpdateData>,
-    contactDataToUpdate: IContactDataUpdateData,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const toUpdateData: IContactDataUpdateData = generateUpdateContactDataObject(
-        contactDataToUpdate,
-      );
-
-      const updatedContactData: object = await ContactData.update(
-        toUpdateData,
-        {
-          where,
-        },
-      );
-
-      this.contactData = updatedContactData;
-    } catch (err) {
-      error(err);
-    }
-    return this.contactData;
-  }
-
-  async deleteContactData(
-    where: WhereOptions<IContactDataDestroyData>,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const destroyedContactData: number = await ContactData.destroy({
-        where,
-      });
-
-      this.contactData = destroyedContactData;
-    } catch (err) {
-      error(err);
-    }
-
-    return this.contactData;
-  }
-
-  async getContactData(
-    where: WhereOptions<IContactDataGetData>,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const contactData = await Contact.findOne({
-        where,
-      });
-
-      this.contactData = contactData.get();
-    } catch (err) {
-      error(err);
-    }
-
-    return this.contactData;
-  }
-
-  async getContactsData(
-    limit: number | null,
-    where?: WhereOptions<IContactDataGetData>,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      let contactsData: any;
-
-      if (!where) {
-        if (limit) {
-          contactsData = await Contact.findAll({ limit });
-        } else {
-          contactsData = await Contact.findAll();
-        }
-      } else {
-        if (limit) {
-          contactsData = await Contact.findAll({
-            where,
-            limit,
-          });
-        } else {
-          contactsData = await Contact.findAll({
-            where,
-          });
-        }
-      }
-
-      const mapedContactsData: IContactDataDataReturn[] = contactsData.map(
-        (contactData) => ({
-          ...contactData.get(),
-        }),
-      );
-
-      this.contactData = mapedContactsData;
-    } catch (err) {
-      error(err);
-    }
-
-    return this.contactData;
+    return this.contacts;
   }
 
   // MongoDB
   // Load Info methods
   async createLoadInfo(
-    loadInfoData: ILoadInfoData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+    loadInfoData: ICreateLoadInfo,
+  ): Promise<ICreateLoadInfo> {
     try {
       const newLoadInfo = new LoadInfo(loadInfoData);
 
@@ -609,61 +444,43 @@ export default class OrchyBase {
   }
 
   async updateLoadInfo(
-    where: ILoadInfoUpdateData,
-    loadInfoDataToUpdate: ILoadInfoUpdateData,
-  ): Promise<any> {
+    where: FilterQuery<IUpdateLoadInfo>,
+    loadInfoDataToUpdate: IUpdateLoadInfo,
+  ): Promise<IUpdateLoadInfo | null> {
     try {
-      const toUpdateData: ILoadInfoUpdateData = generateUpdateLoadInfoDataObject(
-        loadInfoDataToUpdate,
-      );
-
-      const updatedLoadInfo: any = await LoadInfo.findOneAndUpdate(
+      const updatedLoadInfo: IUpdateLoadInfo = await LoadInfo.findOneAndUpdate(
         where,
-        toUpdateData,
+        loadInfoDataToUpdate,
         { runValidators: true },
       );
 
-      this.loadInfo = updatedLoadInfo;
+      this.updatedLoadInfo = updatedLoadInfo;
     } catch (err) {
       error(err);
     }
 
-    this.loadInfo;
+    return this.updatedLoadInfo;
   }
 
   async deleteLoadInfo(
-    where: ILoadInfoDestroyData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+    where: FilterQuery<IDeleteLoadInfo>,
+  ): Promise<IDeleteLoadInfo | null> {
     try {
-      const destroyedLoadInfo: ILoadInfoDestroyData = await LoadInfo.findOneAndDelete(
+      const deletedLoadInfo: IDeleteLoadInfo = await LoadInfo.findOneAndDelete(
         where,
       );
 
-      this.loadInfo = destroyedLoadInfo;
+      this.deletedLoadInfo = deletedLoadInfo;
     } catch (err) {
       error(err);
     }
 
-    return this.loadInfo;
+    return this.deletedLoadInfo;
   }
 
-  async getLoadInfo(
-    where: ILoadInfoGetData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+  async getLoadInfo(where: IGetLoadInfo): Promise<IGetLoadInfo> {
     try {
-      const loadInfo = await LoadInfo.findOne(where);
+      const loadInfo: IGetLoadInfo = await LoadInfo.findOne(where);
 
       this.loadInfo = loadInfo;
     } catch (err) {
@@ -675,16 +492,10 @@ export default class OrchyBase {
 
   async getLoadInfosData(
     limit: number | null,
-    where?: ILoadInfoGetData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+    where?: IGetLoadInfo,
+  ): Promise<IGetLoadInfo[]> {
     try {
-      let loadInfosData: any;
+      let loadInfosData: IGetLoadInfo[];
 
       if (limit) {
         if (!where) {
@@ -692,30 +503,27 @@ export default class OrchyBase {
         } else {
           loadInfosData = await LoadInfo.find(where).limit(limit);
         }
+      } else if (!where) {
+        loadInfosData = await LoadInfo.find();
       } else {
-        if (!where) {
-          loadInfosData = await LoadInfo.find();
-        } else {
-          loadInfosData = await LoadInfo.find(where);
-        }
+        loadInfosData = await LoadInfo.find(where);
       }
 
-      this.loadInfo = loadInfosData;
+      this.loadInfos = loadInfosData;
     } catch (err) {
       error(err);
     }
 
-    return this.loadInfo;
+    return this.loadInfos;
   }
 
   // Load Status methods
   async createLoadStatus(
-    loadStatusData: ILoadStatusData,
-  ): Promise<
-    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
-  > {
+    loadStatusData: ICreateLoadStatus,
+  ): Promise<ICreateLoadStatus> {
     try {
       const newLoadStatus = new LoadStatus(loadStatusData);
+
       this.loadStatus = await newLoadStatus.save();
     } catch (err) {
       error(err);
@@ -724,49 +532,45 @@ export default class OrchyBase {
   }
 
   async updateLoadStatus(
-    where: ILoadStatusUpdateData,
-    loadStatusDataToUpdate: ILoadStatusUpdateData,
-  ): Promise<any> {
+    where: FilterQuery<IUpdateLoadStatus>,
+    loadStatusDataToUpdate: IUpdateLoadStatus,
+  ): Promise<IUpdateLoadStatus | null> {
     try {
-      const toUpdateData: ILoadStatusUpdateData = generateUpdateLoadStatusDataObject(
-        loadStatusDataToUpdate,
-      );
-
-      const updatedLoadStatus: any = await LoadInfo.findOneAndUpdate(
+      const updatedLoadStatus: IUpdateLoadStatus = await LoadInfo.findOneAndUpdate(
         where,
-        toUpdateData,
+        loadStatusDataToUpdate,
         { runValidators: true },
       );
 
-      this.loadStatus = updatedLoadStatus;
+      this.updatedLoadStatus = updatedLoadStatus;
     } catch (err) {
       error(err);
     }
 
-    this.loadStatus;
+    return this.updatedLoadStatus;
   }
 
   async deleteLoadStatus(
-    where: ILoadStatusDestroyData,
-  ): Promise<
-    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
-  > {
+    where: FilterQuery<IDeleteLoadStatus>,
+  ): Promise<IDeleteLoadStatus | null> {
     try {
-      const destroyedLoadStatus: ILoadStatusDestroyData = await LoadStatus.findOneAndDelete(
+      const destroyedLoadStatus: IDeleteLoadStatus = await LoadStatus.findOneAndDelete(
         where,
       );
 
-      this.loadStatus = destroyedLoadStatus;
+      this.deletedLoadStatus = destroyedLoadStatus;
     } catch (err) {
       error(err);
     }
 
-    return this.loadStatus;
+    return this.deletedLoadStatus;
   }
 
-  async getLoadStatus(where: ILoadInfoData): Promise<object> {
+  async getLoadStatus(
+    where: FilterQuery<IGetLoadStatus>,
+  ): Promise<IGetLoadStatus> {
     try {
-      const loadStatus = await LoadInfo.findOne(where);
+      const loadStatus: IGetLoadStatus = await LoadInfo.findOne(where);
 
       this.loadStatus = loadStatus;
     } catch (err) {
@@ -778,10 +582,8 @@ export default class OrchyBase {
 
   async getLoadStatuses(
     limit: number | null,
-    where?: ILoadStatusGetData,
-  ): Promise<
-    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
-  > {
+    where?: FilterQuery<IGetLoadStatus>,
+  ): Promise<IGetLoadStatus[] | null> {
     try {
       let loadStatusesData: any;
 
@@ -791,12 +593,10 @@ export default class OrchyBase {
         } else {
           loadStatusesData = await LoadInfo.find(where).limit(limit);
         }
+      } else if (!where) {
+        loadStatusesData = await LoadInfo.find();
       } else {
-        if (!where) {
-          loadStatusesData = await LoadInfo.find();
-        } else {
-          loadStatusesData = await LoadInfo.find(where);
-        }
+        loadStatusesData = await LoadInfo.find(where);
       }
 
       this.loadStatus = loadStatusesData;
@@ -804,15 +604,16 @@ export default class OrchyBase {
       error(err);
     }
 
-    return this.loadStatus;
+    return this.loadStatuses;
   }
 
   // Queue Contact methods
   async createQueueContact(
-    queueContactData: IQueueContactData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    queueContactData: ICreateQueueContact,
+  ): Promise<ICreateQueueContact> {
     try {
       const newQueueContact = new QueueContact(queueContactData);
+
       this.queueContact = await newQueueContact.save();
     } catch (err) {
       error(err);
@@ -821,47 +622,43 @@ export default class OrchyBase {
   }
 
   async updateQueueContact(
-    where: IQueueContactUpdateData,
-    queueContactDataToUpdate: IQueueContactUpdateData,
-  ): Promise<any> {
+    where: FilterQuery<IUpdateQueueContact>,
+    queueContactDataToUpdate: IUpdateQueueContact,
+  ): Promise<IUpdateQueueContact> {
     try {
-      const toUpdateData: IQueueContactUpdateData = generateUpdateQueueContactDataObject(
-        queueContactDataToUpdate,
-      );
-
-      const updatedQueueContact: any = await QueueContact.findOneAndUpdate(
+      const updatedQueueContact: IUpdateQueueContact = await QueueContact.findOneAndUpdate(
         where,
-        toUpdateData,
+        queueContactDataToUpdate,
         { runValidators: true },
       );
 
-      this.queueContact = updatedQueueContact;
+      this.updatedQueueContact = updatedQueueContact;
     } catch (err) {
       error(err);
     }
 
-    this.queueContact;
+    return this.updatedQueueContact;
   }
 
   async deleteQueueContact(
-    where: IQueueContactDestroyData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    where: FilterQuery<IDeleteQueueContact>,
+  ): Promise<IDeleteQueueContact> {
     try {
-      const destroyedQueueContact: IQueueContactDestroyData = await QueueContact.findOneAndDelete(
+      const destroyedQueueContact: IDeleteQueueContact = await QueueContact.findOneAndDelete(
         where,
       );
 
-      this.queueContact = destroyedQueueContact;
+      this.deletedQueueContact = destroyedQueueContact;
     } catch (err) {
       error(err);
     }
 
-    return this.queueContact;
+    return this.deletedQueueContact;
   }
 
   async getQueueContact(
-    where: IQueueContactGetData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    where: ICreateQueueContact,
+  ): Promise<ICreateQueueContact> {
     try {
       const queueContact = await QueueContact.findOne(where);
 
@@ -875,8 +672,8 @@ export default class OrchyBase {
 
   async getQueueContacts(
     limit: number | null,
-    where?: IQueueContactGetData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    where?: FilterQuery<IGetQueueContact>,
+  ): Promise<IGetQueueContact[]> {
     try {
       let queueContactsData: any;
 
@@ -886,19 +683,17 @@ export default class OrchyBase {
         } else {
           queueContactsData = await QueueContact.find(where).limit(limit);
         }
+      } else if (!where) {
+        queueContactsData = await QueueContact.find();
       } else {
-        if (!where) {
-          queueContactsData = await QueueContact.find();
-        } else {
-          queueContactsData = await QueueContact.find(where);
-        }
+        queueContactsData = await QueueContact.find(where);
       }
 
-      this.queueContact = queueContactsData;
+      this.queueContacts = queueContactsData;
     } catch (err) {
       error(err);
     }
 
-    return this.queueContact;
+    return this.queueContacts;
   }
 }

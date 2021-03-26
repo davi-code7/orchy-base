@@ -16,13 +16,23 @@ class Queue extends Model {
           allowNull: false,
           unique: false,
         },
+        register: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          unique: false,
+        },
         schedule: {
           type: DataTypes.DATE,
           allowNull: false,
           unique: false,
         },
-        status: {
-          type: DataTypes.SMALLINT,
+        state: {
+          type: DataTypes.ENUM(['pending', 'working', 'done']),
+          allowNull: false,
+          unique: false,
+        },
+        active: {
+          type: DataTypes.BOOLEAN,
           allowNull: false,
           unique: false,
         },

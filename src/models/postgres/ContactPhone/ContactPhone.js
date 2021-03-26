@@ -1,33 +1,33 @@
 import { DataTypes, Model } from 'sequelize';
 
-class Load extends Model {
+class ContactPhone extends Model {
   static init(sequelize) {
     return super.init(
       {
-        id_load: {
+        id_contact_phone: {
           type: DataTypes.BIGINT,
           defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,
         },
-        id_flow: {
+        id_contact: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+          unique: false,
+        },
+        data_type: {
+          type: DataTypes.ENUM(['cellular', 'landline']),
+          allowNull: false,
+          unique: false,
+        },
+        contact_data: {
           type: DataTypes.STRING,
           allowNull: false,
           unique: false,
         },
-        apiKey: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          unique: false,
-        },
-        register: {
-          type: DataTypes.DATE,
-          allowNull: false,
-          unique: false,
-        },
-        active: {
-          type: DataTypes.BOOLEAN,
+        state: {
+          type: DataTypes.ENUM(['pending', 'sent', 'failed']),
           allowNull: false,
           unique: false,
         },
@@ -50,8 +50,8 @@ class Load extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
+    this.belongsTo(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
   }
 }
 
-export default Load;
+export default ContactPhone;

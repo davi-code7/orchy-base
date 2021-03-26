@@ -22,6 +22,11 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      state: {
+        type: Sequelize.ENUM(['pending', 'working', 'done']),
+        allowNull: false,
+        unique: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -1,10 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 
-class ContactData extends Model {
+class ContactComplement extends Model {
   static init(sequelize) {
     return super.init(
       {
-        id_contact_data: {
+        id_contact_complement: {
           type: DataTypes.BIGINT,
           defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
@@ -16,18 +16,13 @@ class ContactData extends Model {
           allowNull: false,
           unique: false,
         },
-        data_type: {
-          type: DataTypes.ENUM(['cell_phone', 'landline', 'email']),
-          allowNull: false,
-          unique: false,
-        },
-        contact_data: {
+        field: {
           type: DataTypes.STRING,
           allowNull: false,
           unique: false,
         },
-        status: {
-          type: DataTypes.ENUM(['pending', 'sent', 'failured']),
+        value: {
+          type: DataTypes.STRING,
           allowNull: false,
           unique: false,
         },
@@ -54,4 +49,4 @@ class ContactData extends Model {
   }
 }
 
-export default ContactData;
+export default ContactComplement;

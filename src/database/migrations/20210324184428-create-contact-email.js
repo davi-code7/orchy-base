@@ -2,33 +2,24 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('queues', {
-      id_queue: {
+    await queryInterface.createTable('contacts_email', {
+      id_contacts_email: {
         type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
-      id_load: {
+      id_contact: {
         type: Sequelize.BIGINT,
         allowNull: false,
       },
-      register: {
-        type: Sequelize.DATE,
+      contact_data: {
+        type: Sequelize.STRING,
         allowNull: false,
         unique: false,
-      },
-      schedule: {
-        type: Sequelize.DATE,
-        allowNull: false,
       },
       state: {
-        type: Sequelize.ENUM(['pending', 'working', 'done']),
-        allowNull: false,
-        unique: false,
-      },
-      active: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.ENUM(['pending', 'sent', 'failed']),
         allowNull: false,
         unique: false,
       },
@@ -44,6 +35,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('queues');
+    await queryInterface.dropTable('contacts_email');
   },
 };

@@ -26,6 +26,11 @@ class Contact extends Model {
           allowNull: false,
           unique: true,
         },
+        state: {
+          type: DataTypes.ENUM(['pending', 'working', 'done']),
+          allowNull: false,
+          unique: false,
+        },
         created_at: {
           type: DataTypes.DATE,
           allowNull: false,
@@ -47,9 +52,17 @@ class Contact extends Model {
   static associate(models) {
     this.hasOne(models.Load, { foreignKey: 'id_load', as: 'load' });
 
-    this.hasMany(models.ContactData, {
+    this.hasMany(models.ContactComplement, {
       foreignKey: 'id_contact',
-      as: 'contact_data',
+      as: 'contact_complement',
+    });
+    this.hasMany(models.ContactEmail, {
+      foreignKey: 'id_contact',
+      as: 'contact_email',
+    });
+    this.hasMany(models.ContactPhone, {
+      foreignKey: 'id_contact',
+      as: 'contact_phone',
     });
   }
 }

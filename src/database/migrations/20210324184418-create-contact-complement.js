@@ -2,8 +2,8 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('contact_data', {
-      id_contact_data: {
+    await queryInterface.createTable('contacts_complement', {
+      id_contacts_complement: {
         type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true,
@@ -13,17 +13,15 @@ module.exports = {
         type: Sequelize.BIGINT,
         allowNull: false,
       },
-      data_type: {
-        type: Sequelize.SMALLINT,
-        allowNull: false,
-      },
-      contact_data: {
+      field: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: false,
       },
-      status: {
-        type: Sequelize.SMALLINT,
+      value: {
+        type: Sequelize.STRING,
         allowNull: false,
+        unique: false,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -37,6 +35,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('contact_data');
+    await queryInterface.dropTable('contacts_complement');
   },
 };

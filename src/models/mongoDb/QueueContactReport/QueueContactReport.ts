@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { IQueueContact } from '../../../interfaces/models/mongoDb';
+import { IQueueContactReport } from '../../../interfaces/models/mongoDb';
 
-const QueueContactSchema = new mongoose.Schema({
+const QueueContactReportSchema = new mongoose.Schema({
   apiKey: {
     type: String,
     required: true,
@@ -26,30 +26,6 @@ const QueueContactSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  contact: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-      cpf: {
-        type: String,
-        required: true,
-      },
-      complement: [
-        {
-          field: {
-            type: String,
-            required: true,
-          },
-          value: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-    },
-  ],
   event_type: {
     type: String,
     enum: ['SMS', 'HSM', 'Email'],
@@ -77,7 +53,7 @@ const QueueContactSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  conditions: [
+  conditions_meet: [
     {
       context: {
         type: String,
@@ -92,10 +68,6 @@ const QueueContactSchema = new mongoose.Schema({
         required: true,
       },
       destination: {
-        type: String,
-        required: true,
-      },
-      variable: {
         type: String,
         required: true,
       },
@@ -136,9 +108,9 @@ const QueueContactSchema = new mongoose.Schema({
   },
 });
 
-const QueueContact = mongoose.model<IQueueContact>(
-  'QueueContact',
-  QueueContactSchema,
+const QueueContactReport = mongoose.model<IQueueContactReport>(
+  'QueueContactReport',
+  QueueContactReportSchema,
 );
 
-export default QueueContact;
+export default QueueContactReport;

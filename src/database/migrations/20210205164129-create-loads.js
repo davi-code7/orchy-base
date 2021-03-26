@@ -9,18 +9,11 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      // id_queue: {
-      //   type: Sequelize.BIGINT,
-      //   allowNull: false,
-      //   references: { model: 'queues', key: 'id_queue' },
-      //   onUpdate: 'CASCADE',
-      //   onDelete: 'CASCADE',
-      // },
       id_flow: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      id_org: {
+      apiKey: {
         type: Sequelize.STRING,
         allowNull: false,
       },
