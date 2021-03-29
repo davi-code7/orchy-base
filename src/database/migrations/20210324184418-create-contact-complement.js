@@ -2,8 +2,8 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('contacts_complement', {
-      id_contacts_complement: {
+    await queryInterface.createTable('contact_complements', {
+      id_contact_complement: {
         type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true,
@@ -41,6 +41,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('contacts_complement');
+    await queryInterface.dropTable('contact_complements');
   },
 };

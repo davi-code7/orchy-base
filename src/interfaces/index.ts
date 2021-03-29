@@ -73,6 +73,7 @@ export interface IQueueReturn {
   active: boolean;
   created_at: Date;
   updated_at: null | Date;
+  load: ICreateLoad;
 }
 
 // Load
@@ -124,6 +125,7 @@ export interface ILoadReturn {
   active: boolean;
   created_at: Date;
   updated_at: null | Date;
+  queue: ICreateQueue;
 }
 
 // Contact
@@ -162,6 +164,7 @@ export interface IContactGetData {
   id_load?: BigInt;
   name?: String;
   key?: String;
+  state?: 'pending' | 'working' | 'done';
   created_at?: number;
   updated_at?: null | number;
 }
@@ -174,7 +177,136 @@ export interface IContactReturn {
   state: 'pending' | 'working' | 'done';
   created_at: Date;
   updated_at: null | Date;
+  contact_complement: IContactComplementGetData,
+  contact_phone: IContactPhoneGetData,
+  contact_email: IContactEmailGetData,
 }
+
+//ContactEmail
+
+export interface ICreateContactEmail {
+  id_contact_email?: BigInt;
+  id_contact: BigInt;
+  contact_data: string;
+  state: 'pending' | 'working' | 'done';
+  created_at: Date;
+  updated_at: null | Date;
+}
+
+export interface IUpdateContactEmail {
+  id_contact_email?: BigInt;
+  id_contact?: BigInt;
+  contact_data?: string;
+  state?: 'pending' | 'working' | 'done';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+export interface IDeleteContactEmail {
+  id_contact_email?: BigInt;
+  id_contact?: BigInt;
+  contact_data?: string;
+  state?: 'pending' | 'working' | 'done';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+export interface IContactEmailGetData {
+  id_contact_email?: BigInt;
+  id_contact?: BigInt;
+  contact_data?: string;
+  state?: 'pending' | 'working' | 'done';
+  created_at?: Date;
+  updated_at?: null | Date;
+  contact: ICreateContact;
+}
+
+
+
+//ContactPhone
+
+export interface ICreateContactPhone {
+  id_contact_phone?: BigInt;
+  id_contact: BigInt;
+  data_type: 'cellular' | 'landline',
+  contact_data: string;
+  state: 'pending' | 'working' | 'done';
+  created_at: Date;
+  updated_at: null | Date;
+}
+
+export interface IUpdateContactPhone {
+  id_contact_phone?: BigInt;
+  id_contact?: BigInt;
+  data_type?: 'cellular' | 'landline',
+  contact_data?: string;
+  state?: 'pending' | 'working' | 'done';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+export interface IDeleteContactPhone {
+  id_contact_phone?: BigInt;
+  id_contact?: BigInt;
+  data_type?: 'cellular' | 'landline',
+  contact_data?: string;
+  state?: 'pending' | 'working' | 'done';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+export interface IContactPhoneGetData {
+  id_contact_phone?: BigInt;
+  id_contact?: BigInt;
+  data_type?: 'cellular' | 'landline',
+  contact_data?: string;
+  state?: 'pending' | 'working' | 'done';
+  created_at?: Date;
+  updated_at?: null | Date;
+  contact: ICreateContact;
+}
+
+
+//ContactComplement
+
+export interface ICreateContactComplement {
+  id_contact_complement?: BigInt;
+  id_contact: BigInt;
+  field: string;
+  value: string;
+  created_at: Date;
+  updated_at: null | Date;
+}
+
+export interface IUpdateContactComplement {
+  id_contact_complement?: BigInt;
+  id_contact?: BigInt;
+  field?: string;
+  value?: string;
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+export interface IDeleteContactComplement {
+  id_contact_complement?: BigInt;
+  id_contact?: BigInt;
+  field?: string;
+  value?: string;
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+export interface IContactComplementGetData {
+  id_contact_complement?: BigInt;
+  id_contact?: BigInt;
+  field?: string;
+  value?: string;
+  created_at?: Date;
+  updated_at?: null | Date;
+  contact: ICreateContact;
+}
+
+
 
 // MongoDB
 export interface ICreateLoadInfo {
