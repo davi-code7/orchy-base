@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 // Postgres
 // Queue
 export interface ICreateQueue {
-  id_queue: BigInt;
+  id_queue?: BigInt;
   id_load: BigInt;
   register: Date;
   schedule: Date;
@@ -65,7 +65,7 @@ export interface IGetQueue {
 }
 
 export interface IQueueReturn {
-  id_queue: BigInt;
+  id_queue?: BigInt;
   id_load: BigInt;
   register: Date;
   schedule: Date;
@@ -77,9 +77,9 @@ export interface IQueueReturn {
 
 // Load
 export interface ICreateLoad {
-  id_load: BigInt;
+  id_load?: BigInt;
   id_flow: string;
-  apiKey: string;
+  api_key: string;
   register: Date;
   active: boolean;
   created_at: Date;
@@ -89,7 +89,7 @@ export interface ICreateLoad {
 export interface IUpdateLoad {
   id_load?: BigInt;
   id_flow?: string;
-  apiKey?: string;
+  api_key?: string;
   register?: Date;
   active?: boolean;
   created_at?: Date;
@@ -99,7 +99,7 @@ export interface IUpdateLoad {
 export interface IDeleteLoad {
   id_load?: BigInt;
   id_flow?: string;
-  apiKey?: string;
+  api_key?: string;
   register?: Date;
   active?: boolean;
   created_at?: Date;
@@ -109,7 +109,7 @@ export interface IDeleteLoad {
 export interface IGetLoad {
   id_load?: BigInt;
   id_flow?: string;
-  apiKey?: string;
+  api_key?: string;
   register?: Date;
   active?: boolean;
   created_at?: Date;
@@ -119,7 +119,7 @@ export interface IGetLoad {
 export interface ILoadReturn {
   id_load: BigInt;
   id_flow: string;
-  apiKey: string;
+  api_key: string;
   register: Date;
   active: boolean;
   created_at: Date;
@@ -128,7 +128,7 @@ export interface ILoadReturn {
 
 // Contact
 export interface ICreateContact {
-  id_contact: BigInt;
+  id_contact?: BigInt;
   id_load: BigInt;
   name: string;
   key: string;
@@ -180,7 +180,7 @@ export interface IContactReturn {
 export interface ICreateLoadInfo {
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   schedule?: Date;
@@ -199,7 +199,7 @@ export interface IUpdateLoadInfo {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   schedule?: Date;
@@ -219,7 +219,7 @@ export interface IDeleteLoadInfo {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   schedule?: Date;
@@ -239,7 +239,7 @@ export interface IGetLoadInfo {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   schedule?: Date;
@@ -276,7 +276,7 @@ export interface ILoadInfoReturn extends Document {
 export interface ICreateLoadStatus {
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   total?: number;
@@ -294,7 +294,7 @@ export interface IUpdateLoadStatus {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   total?: number;
@@ -312,7 +312,7 @@ export interface IDeleteLoadStatus {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   total?: number;
@@ -330,7 +330,7 @@ export interface IGetLoadStatus {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   total?: number;
@@ -346,7 +346,7 @@ export interface IGetLoadStatus {
 
 // Queue Contact
 export interface ICreateQueueContact {
-  apiKey?: string;
+  api_key?: string;
   id_contact_data?: number;
   id_load?: number;
   id_flow?: string;
@@ -386,7 +386,7 @@ export interface ICreateQueueContact {
 
 export interface IUpdateQueueContact {
   _id?: string;
-  apiKey?: string;
+  api_key?: string;
   id_contact_data?: number;
   id_load?: number;
   id_flow?: string;
@@ -426,7 +426,7 @@ export interface IUpdateQueueContact {
 
 export interface IDeleteQueueContact {
   _id?: string;
-  apiKey?: string;
+  api_key?: string;
   id_contact_data?: number;
   id_load?: number;
   id_flow?: string;
@@ -466,7 +466,7 @@ export interface IDeleteQueueContact {
 
 export interface IGetQueueContact {
   _id?: string;
-  apiKey?: string;
+  api_key?: string;
   id_contact_data?: number;
   id_load?: number;
   id_flow?: string;

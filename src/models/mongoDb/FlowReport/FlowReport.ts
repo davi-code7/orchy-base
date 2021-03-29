@@ -6,7 +6,7 @@ const FlowReportSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  apiKey: {
+  api_key: {
     type: String,
     required: true,
   },

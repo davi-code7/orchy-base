@@ -50,7 +50,7 @@ class ContactPhone extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
+    this.belongsTo(models.Contact, { foreignKey: 'id_contact', as: 'contact_phone' });
   }
 }
 

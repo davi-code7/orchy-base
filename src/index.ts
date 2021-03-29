@@ -697,3 +697,52 @@ export default class OrchyBase {
     return this.queueContacts;
   }
 }
+
+
+const orchBase = new OrchyBase();
+async function  teste(){
+  const createLoad = await orchBase.createLoad({
+    // id_load: null,
+    id_flow: '12345',
+    api_key: '2',
+    register: new Date(),
+    active: true,
+    created_at: new Date(),
+    updated_at: null
+  })
+
+  console.log(createLoad);
+
+  const createdQueue = await orchBase.createQueue({
+    id_load: createLoad.id_load,
+    register: new Date(),
+    schedule: new Date(),
+    state: 'pending',
+    active: true,
+    created_at: new Date(),
+    updated_at: null
+  })
+
+  console.log(createdQueue);
+
+
+  const createdContact = await orchBase.createContact({
+    id_load: createLoad.id_load,
+    name: 'Cireneu Guilherme',
+    key: '123',
+    state: 'pending',    
+    created_at: new Date(),
+    updated_at: null
+  })
+
+  console.log(createdContact);
+
+
+
+
+
+
+}
+
+
+teste()

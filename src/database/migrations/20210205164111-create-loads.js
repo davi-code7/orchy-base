@@ -2,35 +2,28 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('queues', {
-      id_queue: {
+    await queryInterface.createTable('loads', {
+      id_load: {
         type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
-      id_load: {
-        type: Sequelize.BIGINT,
+      id_flow: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      api_key: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       register: {
         type: Sequelize.DATE,
         allowNull: false,
-        unique: false,
-      },
-      schedule: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      state: {
-        type: Sequelize.ENUM(['pending', 'working', 'done']),
-        allowNull: false,
-        unique: false,
       },
       active: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        unique: false,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -44,6 +37,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('queues');
+    await queryInterface.dropTable('loads');
   },
 };

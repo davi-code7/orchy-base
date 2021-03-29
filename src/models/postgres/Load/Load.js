@@ -16,7 +16,7 @@ class Load extends Model {
           allowNull: false,
           unique: false,
         },
-        apiKey: {
+        api_key: {
           type: DataTypes.STRING,
           allowNull: false,
           unique: false,
@@ -50,7 +50,9 @@ class Load extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
+    this.hasMany(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
+
+    this.hasOne(models.Queue, { foreignKey: 'id_load', as: 'load' })
   }
 }
 

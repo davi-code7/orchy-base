@@ -12,6 +12,12 @@ module.exports = {
       id_load: {
         type: Sequelize.BIGINT,
         allowNull: false,
+        references: {
+          model: 'loads',
+          key: 'id_load',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       name: {
         type: Sequelize.STRING,

@@ -12,6 +12,12 @@ module.exports = {
       id_contact: {
         type: Sequelize.BIGINT,
         allowNull: false,
+        references: {
+          model: 'contacts',
+          key: 'id_contact',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       data_type: {
         type: Sequelize.ENUM(['cellular', 'landline']),

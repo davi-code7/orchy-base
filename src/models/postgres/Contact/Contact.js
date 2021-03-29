@@ -50,7 +50,7 @@ class Contact extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.Load, { foreignKey: 'id_load', as: 'load' });
+    this.belongsTo(models.Load, { foreignKey: 'id_load', as: 'load' });
 
     this.hasMany(models.ContactComplement, {
       foreignKey: 'id_contact',

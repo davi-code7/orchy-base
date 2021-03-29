@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { IQueueContactReport } from '../../../interfaces/models/mongoDb';
 
 const QueueContactReportSchema = new mongoose.Schema({
-  apiKey: {
+  api_key: {
     type: String,
     required: true,
   },

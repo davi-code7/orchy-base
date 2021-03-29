@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 export interface IFlowReport extends Document {
   _id: string;
   id_load: number;
-  apiKey: string;
+  api_key: string;
   id_flow: string;
   name: string;
   id_item: string;
@@ -20,7 +20,7 @@ export interface IFlowReport extends Document {
 export interface IFlowStatus extends Document {
   _id: string;
   id_load: number;
-  apiKey: string;
+  api_key: string;
   id_flow: string;
   name: string;
   id_item: string;
@@ -38,7 +38,7 @@ export interface ILoadInfo extends Document {
   _id?: string;
   id_flow?: string;
   id_load?: number;
-  apiKey?: string;
+  api_key?: string;
   start?: Date;
   finish?: Date;
   schedule?: Date;
@@ -57,7 +57,7 @@ export interface ILoadStatus extends Document {
   _id: string;
   id_flow: string;
   id_load: number;
-  apiKey: string;
+  api_key: string;
   start: Date;
   finish: Date;
   total: number;
@@ -73,7 +73,7 @@ export interface ILoadStatus extends Document {
 
 export interface IQueueContact extends Document {
   _id?: string;
-  apiKey?: string;
+  api_key?: string;
   id_contact_data?: number;
   id_load?: number;
   id_flow?: string;
@@ -113,7 +113,7 @@ export interface IQueueContact extends Document {
 
 export interface IQueueContactReport extends Document {
   _id: string;
-  apiKey: string;
+  api_key: string;
   id_contact_data: number;
   id_load: number;
   id_flow: string;
