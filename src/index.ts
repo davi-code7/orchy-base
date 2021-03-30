@@ -1111,11 +1111,3 @@ export default class OrchyBase {
     return this.queueContacts;
   }
 }
-
-const orchybase = new OrchyBase(false);
-
-async function test() {
-  orchybase.runMigrations();
-}
-
-test();
