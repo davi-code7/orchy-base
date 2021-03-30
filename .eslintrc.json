@@ -30,6 +30,7 @@
     "no-console": "off",
     "import/no-extraneous-dependencies": "off",
     "no-unused-expressions": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "class-methods-use-this": "off"
   }
 }

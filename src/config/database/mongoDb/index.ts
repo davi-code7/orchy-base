@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { success } from '../../../utils/logger/logger';
 
 export const connectMongoDB = async (): Promise<void> => {
   try {
@@ -11,7 +10,7 @@ export const connectMongoDB = async (): Promise<void> => {
       useFindAndModify: false,
     });
 
-    success(`MongoDB connected: ${conn.connection.host}`);
+    console.log(`[OK] MongoDB connected: ${conn.connection.host}`);
   } catch (err) {
     console.error(err);
     process.exit(1);

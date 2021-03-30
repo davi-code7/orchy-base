@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import './database';
+import { exec } from 'child_process';
 
 import { WhereOptions } from 'sequelize/types';
 import { FilterQuery } from 'mongoose';
-import { error } from './utils/logger/logger';
 
 import { connectMongoDB } from './config/database/mongoDb/index';
 
@@ -106,8 +106,21 @@ export default class OrchyBase {
   private deletedQueueContact: IDeleteQueueContact | null;
   private queueContacts: IGetQueueContact[];
 
-  constructor() {
-    connectMongoDB();
+  constructor(mongoDB: boolean) {
+    if (mongoDB) {
+      connectMongoDB();
+    }
+  }
+
+  runMigrations(): void {
+    exec('yarn sequelize db:migrate', (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+      }
+    });
   }
 
   // Postgres
@@ -117,7 +130,7 @@ export default class OrchyBase {
       const localNewQueue = await Queue.create(queueData);
       this.queue = localNewQueue.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.queue;
   }
@@ -133,7 +146,7 @@ export default class OrchyBase {
 
       this.updatedQueues = updatedQueue;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.updatedQueues;
   }
@@ -146,7 +159,7 @@ export default class OrchyBase {
 
       this.deletedQueues = destroyedQueue;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedQueues;
@@ -164,7 +177,7 @@ export default class OrchyBase {
         load: queue.get().load ? queue.get().load.get() : null,
       };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.queue;
@@ -175,7 +188,6 @@ export default class OrchyBase {
     where?: WhereOptions<IGetQueue>,
   ): Promise<IQueueReturn[]> {
     try {
-      console.log('where:', where);
       let queues: any;
 
       if (!where) {
@@ -209,7 +221,7 @@ export default class OrchyBase {
 
       this.queues = mapedQueues;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.queues;
@@ -221,7 +233,7 @@ export default class OrchyBase {
       const localNewLoad = await Load.create(loadData);
       this.load = localNewLoad.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.load;
   }
@@ -237,7 +249,7 @@ export default class OrchyBase {
 
       this.updatedLoads = updatedLoad;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.updatedLoads;
   }
@@ -250,7 +262,7 @@ export default class OrchyBase {
 
       this.deletedLoads = destroyedLoad;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedLoads;
@@ -268,7 +280,7 @@ export default class OrchyBase {
         queue: load.get().queue ? load.get().queue.get() : null,
       };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.load;
@@ -312,7 +324,7 @@ export default class OrchyBase {
 
       this.loads = mapedLoads;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loads;
@@ -329,7 +341,7 @@ export default class OrchyBase {
       );
       this.contactComplement = localNewContactComplement.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.contactComplement;
   }
@@ -348,7 +360,7 @@ export default class OrchyBase {
 
       this.updatedContactsComplement = updatedContactsComplement;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.updatedContactsComplement;
   }
@@ -365,7 +377,7 @@ export default class OrchyBase {
 
       this.deletedContactsComplement = destroyedContactsComplement;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedContactsComplement;
@@ -387,7 +399,7 @@ export default class OrchyBase {
           : null,
       };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contactComplement;
@@ -435,7 +447,7 @@ export default class OrchyBase {
 
       this.contactsComplement = mapedContactsComplement;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contactsComplement;
@@ -450,7 +462,7 @@ export default class OrchyBase {
       const localNewContactEmail = await ContactEmail.create(ContactEmailData);
       this.contactEmail = localNewContactEmail.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.contactEmail;
   }
@@ -469,7 +481,7 @@ export default class OrchyBase {
 
       this.updatedContactsEmail = updatedContactsEmail;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.updatedContactsEmail;
   }
@@ -484,7 +496,7 @@ export default class OrchyBase {
 
       this.deletedContactsEmail = destroyedContactsEmail;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedContactsEmail;
@@ -506,7 +518,7 @@ export default class OrchyBase {
           : null,
       };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contactEmail;
@@ -554,7 +566,7 @@ export default class OrchyBase {
 
       this.contactsEmail = mapedContactsEmail;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contactsEmail;
@@ -569,7 +581,7 @@ export default class OrchyBase {
       const localNewContactPhone = await ContactPhone.create(contactPhoneData);
       this.contactPhone = localNewContactPhone.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.contactPhone;
   }
@@ -588,7 +600,7 @@ export default class OrchyBase {
 
       this.updatedContactsPhone = updatedContactsPhone;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.updatedContactsPhone;
   }
@@ -603,7 +615,7 @@ export default class OrchyBase {
 
       this.deletedContactsPhone = destroyedContactsPhone;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedContactsPhone;
@@ -625,7 +637,7 @@ export default class OrchyBase {
           : null,
       };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contactPhone;
@@ -673,7 +685,7 @@ export default class OrchyBase {
 
       this.contactsPhone = mapedContactsPhone;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contactsPhone;
@@ -685,7 +697,7 @@ export default class OrchyBase {
       const localNewContact = await Contact.create(contactData);
       this.contact = localNewContact.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.contact;
   }
@@ -701,7 +713,7 @@ export default class OrchyBase {
 
       this.updatedContacts = updatedContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.updatedContacts;
   }
@@ -714,7 +726,7 @@ export default class OrchyBase {
 
       this.deletedContacts = destroyedContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedContacts;
@@ -738,8 +750,8 @@ export default class OrchyBase {
         load: contact.get().load ? contact.get().load.get() : null,
         contact_complement: contact.get().contact_complement
           ? contact
-              .get()
-              .contact_complement.map((complement) => complement.get())
+            .get()
+            .contact_complement.map((complement) => complement.get())
           : null,
         contact_email: contact.get().contact_email
           ? contact.get().contact_email.map((email) => email.get())
@@ -749,7 +761,7 @@ export default class OrchyBase {
           : null,
       };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contact;
@@ -811,8 +823,8 @@ export default class OrchyBase {
         load: contact.get().load ? contact.get().load.get() : null,
         contact_complement: contact.get().contact_complement
           ? contact
-              .get()
-              .contact_complement.map((complement) => complement.get())
+            .get()
+            .contact_complement.map((complement) => complement.get())
           : null,
         contact_email: contact.get().contact_email
           ? contact.get().contact_email.map((email) => email.get())
@@ -824,7 +836,7 @@ export default class OrchyBase {
 
       this.contacts = mapedContacts;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contacts;
@@ -840,7 +852,7 @@ export default class OrchyBase {
 
       this.loadInfo = await newLoadInfo.save();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.loadInfo;
   }
@@ -858,7 +870,7 @@ export default class OrchyBase {
 
       this.updatedLoadInfo = updatedLoadInfo;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.updatedLoadInfo;
@@ -874,7 +886,7 @@ export default class OrchyBase {
 
       this.deletedLoadInfo = deletedLoadInfo;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedLoadInfo;
@@ -886,7 +898,7 @@ export default class OrchyBase {
 
       this.loadInfo = loadInfo;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loadInfo;
@@ -913,7 +925,7 @@ export default class OrchyBase {
 
       this.loadInfos = loadInfosData;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loadInfos;
@@ -928,7 +940,7 @@ export default class OrchyBase {
 
       this.loadStatus = await newLoadStatus.save();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.loadStatus;
   }
@@ -946,7 +958,7 @@ export default class OrchyBase {
 
       this.updatedLoadStatus = updatedLoadStatus;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.updatedLoadStatus;
@@ -962,7 +974,7 @@ export default class OrchyBase {
 
       this.deletedLoadStatus = destroyedLoadStatus;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedLoadStatus;
@@ -976,7 +988,7 @@ export default class OrchyBase {
 
       this.loadStatus = loadStatus;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loadStatus;
@@ -1003,7 +1015,7 @@ export default class OrchyBase {
 
       this.loadStatus = loadStatusesData;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loadStatuses;
@@ -1018,7 +1030,7 @@ export default class OrchyBase {
 
       this.queueContact = await newQueueContact.save();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.queueContact;
   }
@@ -1036,7 +1048,7 @@ export default class OrchyBase {
 
       this.updatedQueueContact = updatedQueueContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.updatedQueueContact;
@@ -1052,7 +1064,7 @@ export default class OrchyBase {
 
       this.deletedQueueContact = destroyedQueueContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.deletedQueueContact;
@@ -1066,7 +1078,7 @@ export default class OrchyBase {
 
       this.queueContact = queueContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.queueContact;
@@ -1093,9 +1105,17 @@ export default class OrchyBase {
 
       this.queueContacts = queueContactsData;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.queueContacts;
   }
 }
+
+const orchybase = new OrchyBase(false);
+
+async function test() {
+  orchybase.runMigrations();
+}
+
+test();
