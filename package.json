@@ -34,7 +34,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "eslint --fix",
+      "eslint --fix ./src",
       "cross-env CI=true yarn test --bail --findRelatedTests --detectOpenHandles",
       "git add ."
     ]
