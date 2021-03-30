@@ -14,7 +14,6 @@ import ContactPhone from './models/postgres/ContactPhone/ContactPhone';
 import ContactEmail from './models/postgres/ContactEmail/ContactEmail';
 import ContactComplement from './models/postgres/ContactComplement/ContactComplement';
 
-
 import LoadInfo from './models/mongoDb/LoadInfo/LoadInfo';
 import LoadStatus from './models/mongoDb/LoadStatus/LoadStatus';
 import QueueContact from './models/mongoDb/QueueContact/QueueContact';
@@ -25,47 +24,36 @@ import {
   IDeleteQueue,
   IGetQueue,
   IQueueReturn,
-
   ICreateLoad,
   IUpdateLoad,
   IDeleteLoad,
   IGetLoad,
   ILoadReturn,
-
   ICreateContact,
   IUpdateContact,
   IDeleteContact,
   IContactGetData,
   IContactReturn,
-
-
   ICreateContactEmail,
   IUpdateContactEmail,
   IDeleteContactEmail,
   IContactEmailGetData,
-
-
   ICreateContactPhone,
   IUpdateContactPhone,
   IDeleteContactPhone,
   IContactPhoneGetData,
-
-
   ICreateContactComplement,
   IUpdateContactComplement,
   IDeleteContactComplement,
   IContactComplementGetData,
-
   ICreateLoadInfo,
   IUpdateLoadInfo,
   IDeleteLoadInfo,
   IGetLoadInfo,
-
   ICreateLoadStatus,
   IUpdateLoadStatus,
   IDeleteLoadStatus,
   IGetLoadStatus,
-
   ICreateQueueContact,
   IUpdateQueueContact,
   IDeleteQueueContact,
@@ -171,7 +159,10 @@ export default class OrchyBase {
         include: { association: 'load' },
       });
 
-      this.queue = { ...queue.get(), load: queue.get().load ? queue.get().load.get() : null };
+      this.queue = {
+        ...queue.get(),
+        load: queue.get().load ? queue.get().load.get() : null,
+      };
     } catch (err) {
       error(err);
     }
@@ -213,7 +204,7 @@ export default class OrchyBase {
 
       const mapedQueues: IQueueReturn[] = queues.map((queue) => ({
         ...queue.get(),
-        load: queue.get().load ? queue.get().load.get() : null
+        load: queue.get().load ? queue.get().load.get() : null,
       }));
 
       this.queues = mapedQueues;
@@ -272,9 +263,10 @@ export default class OrchyBase {
         include: { association: 'queue' },
       });
 
-      this.load = { ...load.get(), queue: load.get().queue ? load.get().queue.get() : null };
-
-
+      this.load = {
+        ...load.get(),
+        queue: load.get().queue ? load.get().queue.get() : null,
+      };
     } catch (err) {
       error(err);
     }
@@ -292,9 +284,9 @@ export default class OrchyBase {
       if (!where) {
         if (limit) {
           loads = await Load.findAll({
-             limit,
-             include: { association: 'queue' },
-             });
+            limit,
+            include: { association: 'queue' },
+          });
         } else {
           loads = await Load.findAll({
             include: { association: 'queue' },
@@ -315,7 +307,7 @@ export default class OrchyBase {
 
       const mapedLoads: ILoadReturn[] = loads.map((load) => ({
         ...load.get(),
-        queue: load.get().queue ? load.get().queue.get() : null
+        queue: load.get().queue ? load.get().queue.get() : null,
       }));
 
       this.loads = mapedLoads;
@@ -328,9 +320,13 @@ export default class OrchyBase {
 
   // Contact Complement methods
 
-  async createContactComplement(contactComplementData: ICreateContactComplement): Promise<ICreateContactComplement> {
+  async createContactComplement(
+    contactComplementData: ICreateContactComplement,
+  ): Promise<ICreateContactComplement> {
     try {
-      const localNewContactComplement = await ContactComplement.create(contactComplementData);
+      const localNewContactComplement = await ContactComplement.create(
+        contactComplementData,
+      );
       this.contactComplement = localNewContactComplement.get();
     } catch (err) {
       error(err);
@@ -338,15 +334,17 @@ export default class OrchyBase {
     return this.contactComplement;
   }
 
-
   async updateContactComplement(
     where: WhereOptions<IUpdateContactComplement>,
     loadDataToUpdate: IUpdateContactComplement,
   ): Promise<object> {
     try {
-      const updatedContactsComplement: object = await ContactComplement.update(loadDataToUpdate, {
-        where,
-      });
+      const updatedContactsComplement: object = await ContactComplement.update(
+        loadDataToUpdate,
+        {
+          where,
+        },
+      );
 
       this.updatedContactsComplement = updatedContactsComplement;
     } catch (err) {
@@ -355,11 +353,15 @@ export default class OrchyBase {
     return this.updatedContactsComplement;
   }
 
-  async deleteContactComplement(where: WhereOptions<IDeleteContactComplement>): Promise<number> {
+  async deleteContactComplement(
+    where: WhereOptions<IDeleteContactComplement>,
+  ): Promise<number> {
     try {
-      const destroyedContactsComplement: number = await ContactComplement.destroy({
-        where,
-      });
+      const destroyedContactsComplement: number = await ContactComplement.destroy(
+        {
+          where,
+        },
+      );
 
       this.deletedContactsComplement = destroyedContactsComplement;
     } catch (err) {
@@ -369,15 +371,21 @@ export default class OrchyBase {
     return this.deletedContactsComplement;
   }
 
-  async getContactComplement(where: WhereOptions<IContactComplementGetData>): Promise<ICreateContactComplement> {
+  async getContactComplement(
+    where: WhereOptions<IContactComplementGetData>,
+  ): Promise<ICreateContactComplement> {
     try {
       const contactComplement = await ContactComplement.findOne({
         where,
         include: { association: 'contact' },
       });
 
-      this.contactComplement = { ...contactComplement.get(), contact: contactComplement.get().contact ? contactComplement.get().contact.get() : null };
-
+      this.contactComplement = {
+        ...contactComplement.get(),
+        contact: contactComplement.get().contact
+          ? contactComplement.get().contact.get()
+          : null,
+      };
     } catch (err) {
       error(err);
     }
@@ -394,13 +402,13 @@ export default class OrchyBase {
 
       if (!where) {
         if (limit) {
-          contactsComplement = await ContactComplement.findAll({ limit,
+          contactsComplement = await ContactComplement.findAll({
+            limit,
             include: { association: 'contact' },
           });
         } else {
           contactsComplement = await ContactComplement.findAll({
             include: { association: 'contact' },
-
           });
         }
       } else if (limit) {
@@ -416,10 +424,14 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContactsComplement: IContactComplementGetData[] = contactsComplement.map((contactComplement) => ({
-        ...contactComplement.get(),
-        contact: contactComplement.get().contact ? contactComplement.get().contact.get() : null 
-      }));
+      const mapedContactsComplement: IContactComplementGetData[] = contactsComplement.map(
+        (contactComplement) => ({
+          ...contactComplement.get(),
+          contact: contactComplement.get().contact
+            ? contactComplement.get().contact.get()
+            : null,
+        }),
+      );
 
       this.contactsComplement = mapedContactsComplement;
     } catch (err) {
@@ -429,10 +441,11 @@ export default class OrchyBase {
     return this.contactsComplement;
   }
 
-
   // Contact Email methods
 
-  async createContactEmail(ContactEmailData: ICreateContactEmail): Promise<ICreateContactEmail> {
+  async createContactEmail(
+    ContactEmailData: ICreateContactEmail,
+  ): Promise<ICreateContactEmail> {
     try {
       const localNewContactEmail = await ContactEmail.create(ContactEmailData);
       this.contactEmail = localNewContactEmail.get();
@@ -442,15 +455,17 @@ export default class OrchyBase {
     return this.contactEmail;
   }
 
-
   async updateContactEmail(
     where: WhereOptions<IUpdateContactEmail>,
     loadDataToUpdate: IUpdateContactEmail,
   ): Promise<object> {
     try {
-      const updatedContactsEmail: object = await ContactEmail.update(loadDataToUpdate, {
-        where,
-      });
+      const updatedContactsEmail: object = await ContactEmail.update(
+        loadDataToUpdate,
+        {
+          where,
+        },
+      );
 
       this.updatedContactsEmail = updatedContactsEmail;
     } catch (err) {
@@ -459,8 +474,9 @@ export default class OrchyBase {
     return this.updatedContactsEmail;
   }
 
-
-  async deleteContactEmail(where: WhereOptions<IDeleteContactEmail>): Promise<number> {
+  async deleteContactEmail(
+    where: WhereOptions<IDeleteContactEmail>,
+  ): Promise<number> {
     try {
       const destroyedContactsEmail: number = await ContactEmail.destroy({
         where,
@@ -474,15 +490,21 @@ export default class OrchyBase {
     return this.deletedContactsEmail;
   }
 
-  async getContactEmail(where: WhereOptions<IContactEmailGetData>): Promise<ICreateContactEmail> {
+  async getContactEmail(
+    where: WhereOptions<IContactEmailGetData>,
+  ): Promise<ICreateContactEmail> {
     try {
       const contactEmail = await ContactEmail.findOne({
         where,
         include: { association: 'contact' },
       });
 
-      this.contactEmail = { ...contactEmail.get(), contact: contactEmail.get().contact ? contactEmail.get().contact.get() : null };
-
+      this.contactEmail = {
+        ...contactEmail.get(),
+        contact: contactEmail.get().contact
+          ? contactEmail.get().contact.get()
+          : null,
+      };
     } catch (err) {
       error(err);
     }
@@ -499,7 +521,7 @@ export default class OrchyBase {
 
       if (!where) {
         if (limit) {
-          contactsEmail = await ContactEmail.findAll({ 
+          contactsEmail = await ContactEmail.findAll({
             limit,
             include: { association: 'contact' },
           });
@@ -521,10 +543,14 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContactsEmail: IContactEmailGetData[] = contactsEmail.map((contactEmail) => ({
-        ...contactEmail.get(),
-        contact: contactEmail.get().contact ? contactEmail.get().contact.get() : null 
-      }));
+      const mapedContactsEmail: IContactEmailGetData[] = contactsEmail.map(
+        (contactEmail) => ({
+          ...contactEmail.get(),
+          contact: contactEmail.get().contact
+            ? contactEmail.get().contact.get()
+            : null,
+        }),
+      );
 
       this.contactsEmail = mapedContactsEmail;
     } catch (err) {
@@ -534,12 +560,11 @@ export default class OrchyBase {
     return this.contactsEmail;
   }
 
-
-
-
   // Contact Phone methods
 
-  async createContactPhone(contactPhoneData: ICreateContactPhone): Promise<ICreateContactPhone> {
+  async createContactPhone(
+    contactPhoneData: ICreateContactPhone,
+  ): Promise<ICreateContactPhone> {
     try {
       const localNewContactPhone = await ContactPhone.create(contactPhoneData);
       this.contactPhone = localNewContactPhone.get();
@@ -549,15 +574,17 @@ export default class OrchyBase {
     return this.contactPhone;
   }
 
-
   async updateContactPhone(
     where: WhereOptions<IUpdateContactPhone>,
     loadDataToUpdate: IUpdateContactPhone,
   ): Promise<object> {
     try {
-      const updatedContactsPhone: object = await ContactPhone.update(loadDataToUpdate, {
-        where,
-      });
+      const updatedContactsPhone: object = await ContactPhone.update(
+        loadDataToUpdate,
+        {
+          where,
+        },
+      );
 
       this.updatedContactsPhone = updatedContactsPhone;
     } catch (err) {
@@ -566,7 +593,9 @@ export default class OrchyBase {
     return this.updatedContactsPhone;
   }
 
-  async deleteContactPhone(where: WhereOptions<IDeleteContactPhone>): Promise<number> {
+  async deleteContactPhone(
+    where: WhereOptions<IDeleteContactPhone>,
+  ): Promise<number> {
     try {
       const destroyedContactsPhone: number = await ContactPhone.destroy({
         where,
@@ -580,15 +609,21 @@ export default class OrchyBase {
     return this.deletedContactsPhone;
   }
 
-  async getContactPhone(where: WhereOptions<IContactPhoneGetData>): Promise<ICreateContactPhone> {
+  async getContactPhone(
+    where: WhereOptions<IContactPhoneGetData>,
+  ): Promise<ICreateContactPhone> {
     try {
       const contactPhone = await ContactPhone.findOne({
         where,
         include: { association: 'contact' },
       });
 
-      this.contactPhone = { ...contactPhone.get(), contact: contactPhone.get().contact ? contactPhone.get().contact.get() : null };
-
+      this.contactPhone = {
+        ...contactPhone.get(),
+        contact: contactPhone.get().contact
+          ? contactPhone.get().contact.get()
+          : null,
+      };
     } catch (err) {
       error(err);
     }
@@ -605,7 +640,7 @@ export default class OrchyBase {
 
       if (!where) {
         if (limit) {
-          contactsPhone = await ContactPhone.findAll({ 
+          contactsPhone = await ContactPhone.findAll({
             limit,
             include: { association: 'contact' },
           });
@@ -627,11 +662,14 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContactsPhone: IContactPhoneGetData[] = contactsPhone.map((contactPhone) => ({
-        ...contactPhone.get(),
-        contact: contactPhone.get().contact ? contactPhone.get().contact.get() : null 
-
-      }));
+      const mapedContactsPhone: IContactPhoneGetData[] = contactsPhone.map(
+        (contactPhone) => ({
+          ...contactPhone.get(),
+          contact: contactPhone.get().contact
+            ? contactPhone.get().contact.get()
+            : null,
+        }),
+      );
 
       this.contactsPhone = mapedContactsPhone;
     } catch (err) {
@@ -640,9 +678,6 @@ export default class OrchyBase {
 
     return this.contactsPhone;
   }
-
-
-
 
   // Contact methods
   async createContact(contactData: ICreateContact): Promise<ICreateContact> {
@@ -692,23 +727,27 @@ export default class OrchyBase {
       const contact = await Contact.findOne({
         where,
         include: [
-          
           { association: 'load' },
           { association: 'contact_complement' },
           { association: 'contact_email' },
           { association: 'contact_phone' },
-
         ],
       });
-      this.contact = { 
+      this.contact = {
         ...contact.get(),
         load: contact.get().load ? contact.get().load.get() : null,
-        contact_complement: contact.get().contact_complement ? contact.get().contact_complement.map(complement => complement.get()) : null,
-        contact_email: contact.get().contact_email ? contact.get().contact_email.map(email => email.get()) : null,
-        contact_phone: contact.get().contact_phone ? contact.get().contact_phone.map(phone => phone.get()) : null 
-      
+        contact_complement: contact.get().contact_complement
+          ? contact
+              .get()
+              .contact_complement.map((complement) => complement.get())
+          : null,
+        contact_email: contact.get().contact_email
+          ? contact.get().contact_email.map((email) => email.get())
+          : null,
+        contact_phone: contact.get().contact_phone
+          ? contact.get().contact_phone.map((phone) => phone.get())
+          : null,
       };
-
     } catch (err) {
       error(err);
     }
@@ -728,7 +767,6 @@ export default class OrchyBase {
           contacts = await Contact.findAll({
             limit,
             include: [
-              
               { association: 'load' },
               { association: 'contact_complement' },
               { association: 'contact_email' },
@@ -738,7 +776,6 @@ export default class OrchyBase {
         } else {
           contacts = await Contact.findAll({
             include: [
-             
               { association: 'load' },
               { association: 'contact_complement' },
               { association: 'contact_email' },
@@ -754,15 +791,13 @@ export default class OrchyBase {
             { association: 'load' },
             { association: 'contact_complement' },
             { association: 'contact_email' },
-            { association: 'contact_phone' },            
-
+            { association: 'contact_phone' },
           ],
         });
       } else {
         contacts = await Contact.findAll({
           where,
           include: [
-           
             { association: 'load' },
             { association: 'contact_complement' },
             { association: 'contact_email' },
@@ -771,18 +806,21 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContacts: IContactReturn[] = contacts.map((contact) => {
-       
-
-        return {
-          ...contact.get(),
-          load: contact.get().load ? contact.get().load.get() : null,
-          contact_complement: contact.get().contact_complement ? contact.get().contact_complement.map(complement => complement.get()) : null,
-          contact_email: contact.get().contact_email ? contact.get().contact_email.map(email => email.get()) : null,
-          contact_phone: contact.get().contact_phone ? contact.get().contact_phone.map(phone => phone.get()) : null 
-      
-        }
-      });
+      const mapedContacts: IContactReturn[] = contacts.map((contact) => ({
+        ...contact.get(),
+        load: contact.get().load ? contact.get().load.get() : null,
+        contact_complement: contact.get().contact_complement
+          ? contact
+              .get()
+              .contact_complement.map((complement) => complement.get())
+          : null,
+        contact_email: contact.get().contact_email
+          ? contact.get().contact_email.map((email) => email.get())
+          : null,
+        contact_phone: contact.get().contact_phone
+          ? contact.get().contact_phone.map((phone) => phone.get())
+          : null,
+      }));
 
       this.contacts = mapedContacts;
     } catch (err) {
