@@ -1,6 +1,6 @@
 {
   "name": "orchy-base-code7",
-  "version": "1.3.5",
+  "version": "1.3.6 ",
   "description": "Configures, sets up database models and implements CRUD methods.",
   "author": "Davi Silva <davi.silva@code7.com>",
   "source": "src/index.ts",
