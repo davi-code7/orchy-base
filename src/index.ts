@@ -19,7 +19,7 @@ import LoadStatus from './models/mongoDb/LoadStatus/LoadStatus';
 import QueueContact from './models/mongoDb/QueueContact/QueueContact';
 
 import {
-  ICreateQueue,
+   ICreateQueue,
   IUpdateQueue,
   IDeleteQueue,
   IGetQueue,
