@@ -169,6 +169,9 @@ export function generateUpdateLoadInfoDataObject(
   if (loadInfoDataToUpdate.telephones_ddd) {
     toUpdateData.telephones_ddd = loadInfoDataToUpdate.telephones_ddd;
   }
+  if (loadInfoDataToUpdate.active) {
+    toUpdateData.active = loadInfoDataToUpdate.active;
+  }
   if (
     loadInfoDataToUpdate.updated_at === null ||
     loadInfoDataToUpdate.updated_at
@@ -216,6 +219,9 @@ export function generateUpdateLoadStatusDataObject(
   }
   if (loadInfoDataToUpdate.total) {
     toUpdateData.total = loadInfoDataToUpdate.total;
+  }
+  if (loadInfoDataToUpdate.active) {
+    toUpdateData.active = loadInfoDataToUpdate.active;
   }
   if (
     loadInfoDataToUpdate.updated_at === null ||
