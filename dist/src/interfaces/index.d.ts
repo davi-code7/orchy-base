@@ -180,6 +180,7 @@ export interface ILoadInfoData {
     telephones: string;
     telephones_ddd: string[];
     email: string;
+    active: Boolean;
     created_at: number;
     updated_at: null | number;
 }
@@ -194,6 +195,7 @@ export interface ILoadInfoUpdateData {
     telephones?: string;
     telephones_ddd?: string[];
     email?: string;
+    active: Boolean;
     created_at?: number;
     updated_at?: null | number;
 }
@@ -208,6 +210,7 @@ export interface ILoadInfoDestroyData {
     telephones?: string;
     telephones_ddd?: string[];
     email?: string;
+    active: Boolean;
     created_at?: number;
     updated_at?: null | number;
 }
@@ -222,6 +225,7 @@ export interface ILoadInfoGetData {
     telephones?: string;
     telephones_ddd?: string[];
     email?: string;
+    active: Boolean;
     created_at?: number;
     updated_at?: null | number;
 }
@@ -237,6 +241,7 @@ export interface ILoadInfoDataReturn extends Document {
     telephones: string;
     telephones_ddd: string[];
     email: string;
+    active: Boolean;
     created_at: number;
     updated_at: null | number;
     __v?: number;
@@ -254,6 +259,7 @@ export interface ILoadStatusData {
     contact_processed: string;
     telephone_processed: string;
     email_processed: string;
+    active: Boolean;
     created_at: number;
     updated_at: null | number;
 }
@@ -271,6 +277,7 @@ export interface ILoadStatusUpdateData {
     contact_processed?: string;
     telephone_processed?: string;
     email_processed?: string;
+    active: Boolean;
     created_at?: number;
     updated_at?: null | number;
     __v?: number;
@@ -289,6 +296,7 @@ export interface ILoadStatusDestroyData {
     contact_processed?: string;
     telephone_processed?: string;
     email_processed?: string;
+    active: Boolean;
     created_at?: number;
     updated_at?: null | number;
     __v?: number;
@@ -307,6 +315,7 @@ export interface ILoadStatusGetData {
     contact_processed?: string;
     telephone_processed?: string;
     email_processed?: string;
+    active: Boolean;
     created_at?: number;
     updated_at?: null | number;
     __v?: number;
@@ -325,6 +334,7 @@ export interface ILoadStatusDataReturn extends Document {
     contact_processed: string;
     telephone_processed: string;
     email_processed: string;
+    active: Boolean;
     created_at: number;
     updated_at: null | number;
     __v?: number;

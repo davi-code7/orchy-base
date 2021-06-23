@@ -11,6 +11,7 @@ export interface ILoadInfo extends Document {
     telephones: string;
     telephones_ddd: string[];
     email: string;
+    active: Boolean;
     created_at: number;
     updated_at: null | number;
 }
@@ -28,6 +29,7 @@ export interface ILoadStatus extends Document {
     contact_processed: string;
     telephone_processed: string;
     email_processed: string;
+    active: Boolean;
     created_at: number;
     updated_at: null | number;
 }

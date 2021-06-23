@@ -45,6 +45,11 @@ const LoadInfoSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    active: {
+      type: Boolean,
+      required: true,
+      default: true,
+    }
     created_at: {
         type: Date,
         default: Date.now,
