@@ -10,10 +10,10 @@ const LoadStatusSchema = new mongoose_1.default.Schema({
         required: true,
     },
     id_load: {
-        type: String,
+        type: Number,
         required: true,
     },
-    id_org: {
+    api_key: {
         type: String,
         required: true,
     },
@@ -26,37 +26,32 @@ const LoadStatusSchema = new mongoose_1.default.Schema({
         required: true,
     },
     total: {
-        type: String,
+        type: Number,
         required: true,
     },
     contact_total: {
-        type: String,
+        type: Number,
         required: true,
     },
     telephone_total: {
-        type: String,
+        type: Number,
         required: true,
     },
     email_total: {
-        type: String,
+        type: Number,
         required: true,
     },
     contact_processed: {
-        type: String,
+        type: Number,
         required: true,
     },
     telephone_processed: {
-        type: String,
+        type: Number,
         required: true,
     },
     email_processed: {
-        type: String,
+        type: Number,
         required: true,
-    },
-    active: {
-        type: Boolean,
-        required: true,
-        default: true,
     },
     created_at: {
         type: Date,

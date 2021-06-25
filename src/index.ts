@@ -1,657 +1,1055 @@
 import 'dotenv/config';
 import './database';
-
+import { exec } from 'child_process';
+import { QueryTypes } from 'sequelize';
+import  sequelize  from './config/database/postgres/index';
 import { WhereOptions } from 'sequelize/types';
-import { error } from './utils/logger/logger';
-import {
-  generateUpdateQueueObject,
-  generateUpdateLoadObject,
-  generateUpdateContactObject,
-  generateUpdateContactDataObject,
-  generateUpdateLoadInfoDataObject,
-  generateUpdateLoadStatusDataObject,
-  generateUpdateQueueContactDataObject,
-} from './utils/generators/index';
+import { FilterQuery } from 'mongoose';
+
 import { connectMongoDB } from './config/database/mongoDb/index';
 
 import Queue from './models/postgres/Queue/Queue';
 import Load from './models/postgres/Load/Load';
-import ContactData from './models/postgres/ContactData/ContactData';
 import Contact from './models/postgres/Contact/Contact';
+import ContactPhone from './models/postgres/ContactPhone/ContactPhone';
+import ContactEmail from './models/postgres/ContactEmail/ContactEmail';
+import ContactComplement from './models/postgres/ContactComplement/ContactComplement';
 
 import LoadInfo from './models/mongoDb/LoadInfo/LoadInfo';
 import LoadStatus from './models/mongoDb/LoadStatus/LoadStatus';
 import QueueContact from './models/mongoDb/QueueContact/QueueContact';
+import QueueContactReport from './models/mongoDb/QueueContactReport/QueueContactReport';
+import FlowReport from './models/mongoDb/FlowReport/FlowReport';
+import FlowStatus from './models/mongoDb/FlowStatus/FlowStatus';
+
+
 
 import {
-  IQueueData,
-  IQueueUpdateData,
-  IQueueDestroyData,
-  IQueueGetData,
+   ICreateQueue,
+  IUpdateQueue,
+  IDeleteQueue,
+  IGetQueue,
   IQueueReturn,
-  ILoadData,
-  ILoadUpdateData,
-  ILoadDestroyData,
-  ILoadGetData,
-  ILoadDataReturn,
-  IContactData,
-  IContactUpdateData,
-  IContactDestroyData,
+  ICreateLoad,
+  IUpdateLoad,
+  IDeleteLoad,
+  IGetLoad,
+  ILoadReturn,
+  ICreateContact,
+  IUpdateContact,
+  IDeleteContact,
   IContactGetData,
-  IContactDataReturn,
-  IContactDataData,
-  IContactDataUpdateData,
-  IContactDataDestroyData,
-  IContactDataGetData,
-  IContactDataDataReturn,
-  ILoadInfoData,
-  ILoadInfoUpdateData,
-  ILoadInfoDestroyData,
-  ILoadInfoGetData,
-  ILoadInfoDataReturn,
-  ILoadStatusData,
-  ILoadStatusUpdateData,
-  ILoadStatusDestroyData,
-  ILoadStatusGetData,
-  ILoadStatusDataReturn,
-  IQueueContactData,
-  IQueueContactUpdateData,
-  IQueueContactDestroyData,
-  IQueueContactGetData,
-  IQueueContactDataReturn,
+  IContactReturn,
+  ICreateContactEmail,
+  IUpdateContactEmail,
+  IDeleteContactEmail,
+  IContactEmailGetData,
+  ICreateContactPhone,
+  IUpdateContactPhone,
+  IDeleteContactPhone,
+  IContactPhoneGetData,
+  ICreateContactComplement,
+  IUpdateContactComplement,
+  IDeleteContactComplement,
+  IContactComplementGetData,
+  ICreateLoadInfo,
+  IUpdateLoadInfo,
+  IDeleteLoadInfo,
+  IGetLoadInfo,
+  ICreateLoadStatus,
+  IUpdateLoadStatus,
+  IDeleteLoadStatus,
+  IGetLoadStatus,
+  ICreateQueueContact,
+  IUpdateQueueContact,
+  IDeleteQueueContact,
+  IGetQueueContact,
+
+  ICreateFlowReport,
+  IUpdateFlowReport,
+  IDeleteFlowReport,
+  IGetFlowReport,
+
+  ICreateQueueContactReport,
+  IUpdateQueueContactReport,
+  IDeleteQueueContactReport,
+  IGetQueueContactReport,
+
+  ICreateFlowStatus,
+  IUpdateFlowStatus,
+  IDeleteFlowStatus,
+  IGetFlowStatus,
+
+
 } from './interfaces/index';
 
 export default class OrchyBase {
-  private queue: IQueueReturn | object | number | IQueueReturn[];
-  private load: ILoadDataReturn | object | number | ILoadDataReturn[];
-  private contact: IContactDataReturn | object | number | IContactDataReturn[];
-  private contactData:
-    | IContactDataDataReturn
-    | object
-    | number
-    | IContactDataDataReturn[];
+  private queue: ICreateQueue;
+  private updatedQueues: object;
+  private deletedQueues: number;
+  private queues: IQueueReturn[];
 
-  private loadInfo:
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[];
-  private loadStatus:
-    | ILoadStatusDataReturn
-    | ILoadStatusUpdateData
-    | object
-    | ILoadStatusGetData[];
-  private queueContact:
-    | object
-    | IQueueContactDataReturn
-    | IQueueContactDataReturn[];
+  private load: ICreateLoad;
+  private updatedLoads: object;
+  private deletedLoads: number;
+  private loads: ILoadReturn[];
 
-  constructor() {
-    connectMongoDB();
+  private contact: IContactReturn;
+  private updatedContacts: object;
+  private deletedContacts: number;
+  private contacts: IContactReturn[];
+
+  private contactPhone: ICreateContactPhone;
+  private updatedContactsPhone: object;
+  private deletedContactsPhone: number;
+  private contactsPhone: IContactPhoneGetData[];
+
+  private contactEmail: ICreateContactEmail;
+  private updatedContactsEmail: object;
+  private deletedContactsEmail: number;
+  private contactsEmail: IContactEmailGetData[];
+
+  private contactComplement: ICreateContactComplement;
+  private updatedContactsComplement: object;
+  private deletedContactsComplement: number;
+  private contactsComplement: IContactComplementGetData[];
+
+  private loadInfo: ICreateLoadInfo;
+  private updatedLoadInfo: IUpdateLoadInfo | null;
+  private deletedLoadInfo: IDeleteLoadInfo | null;
+  private loadInfos: IGetLoadInfo[];
+
+  private loadStatus: ICreateLoadStatus;
+  private updatedLoadStatus: IUpdateLoadStatus | null;
+  private deletedLoadStatus: IDeleteLoadStatus | null;
+  private loadStatuses: IGetLoadStatus[];
+
+  private queueContact: ICreateQueueContact;
+  private updatedQueueContact: IUpdateQueueContact | null;
+  private deletedQueueContact: IDeleteQueueContact | null;
+  private queueContacts: IGetQueueContact[];
+
+  private queueContactReport: ICreateQueueContactReport;
+  private updatedQueueContactReport: IUpdateQueueContactReport | null;
+  private deletedQueueContactReport: IDeleteQueueContactReport | null;
+  private queueContactReports: IGetQueueContactReport[];
+
+
+  private flowReport: ICreateFlowReport;
+  private updatedFlowReport: IUpdateFlowReport | null;
+  private deletedFlowReport: IDeleteFlowReport | null;
+  private flowReports: IGetFlowReport[];
+
+
+  private flowStatus: ICreateFlowStatus;
+  private updatedFlowStatus: IUpdateFlowStatus | null;
+  private deletedFlowStatus: IDeleteFlowStatus | null;
+  private flowsStatus: IGetFlowStatus[];
+  
+  private querySequelizeResponse;
+  
+  constructor(mongoDB: boolean) {
+    if (mongoDB) {
+      connectMongoDB();
+    }
+  }
+
+  runMigrations(): void {
+    exec('yarn sequelize db:migrate', (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+      }
+    });
   }
 
   // Postgres
   // Queue methods
-  async createQueue(
-    queueData: IQueueData,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  async createQueue(queueData: ICreateQueue): Promise<ICreateQueue> {
     try {
       const localNewQueue = await Queue.create(queueData);
       this.queue = localNewQueue.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.queue;
   }
 
   async updateQueue(
-    where: WhereOptions<IQueueUpdateData>,
-    queueDataToUpdate: IQueueUpdateData,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+    where: WhereOptions<IUpdateQueue>,
+    queueDataToUpdate: IUpdateQueue,
+  ): Promise<object> {
     try {
-      const toUpdateData: IQueueUpdateData = generateUpdateQueueObject(
-        queueDataToUpdate,
-      );
-
-      const updatedQueue = await Queue.update(toUpdateData, {
+      const updatedQueue = await Queue.update(queueDataToUpdate, {
         where,
       });
 
-      this.queue = updatedQueue;
+      this.updatedQueues = updatedQueue;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
-    return this.queue;
+    return this.updatedQueues;
   }
 
-  async deleteQueue(
-    where: WhereOptions<IQueueDestroyData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  async deleteQueue(where: WhereOptions<IDeleteQueue>): Promise<number> {
     try {
       const destroyedQueue: number = await Queue.destroy({
         where,
       });
 
-      this.queue = destroyedQueue;
+      this.deletedQueues = destroyedQueue;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.queue;
+    return this.deletedQueues;
   }
 
-  async getQueue(
-    where: WhereOptions<IQueueGetData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+  async getQueue(where: WhereOptions<IGetQueue>): Promise<ICreateQueue> {
     try {
       const queue = await Queue.findOne({
         where,
+        include: { association: 'load' },
       });
 
-      this.queue = queue.get();
+      this.queue = {
+        ...queue.get(),
+        load: queue.get().load ? queue.get().load.get() : null,
+      };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.queue;
   }
 
   async getQueues(
-    where?: WhereOptions<IQueueGetData>,
-  ): Promise<IQueueReturn | object | number | IQueueReturn[]> {
+    limit: number | null,
+    where?: WhereOptions<IGetQueue>,
+  ): Promise<IQueueReturn[]> {
     try {
       let queues: any;
 
       if (!where) {
-        queues = await Queue.findAll();
+        if (limit) {
+          queues = await Queue.findAll({
+            include: { association: 'load' },
+            limit,
+          });
+        } else {
+          queues = await Queue.findAll({
+            include: { association: 'load' },
+          });
+        }
+      } else if (limit) {
+        queues = await Queue.findAll({
+          where,
+          include: { association: 'load' },
+          limit,
+        });
       } else {
         queues = await Queue.findAll({
           where,
+          include: { association: 'load' },
         });
       }
 
-      const mapedQueues = queues.map((queue) => queue.get());
+      const mapedQueues: IQueueReturn[] = queues.map((queue) => ({
+        ...queue.get(),
+        load: queue.get().load ? queue.get().load.get() : null,
+      }));
 
-      this.queue = mapedQueues;
+      this.queues = mapedQueues;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.queue;
+    return this.queues;
   }
 
   // Load methods
-  async createLoad(
-    loadData: ILoadData,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  async createLoad(loadData: ICreateLoad): Promise<ICreateLoad> {
     try {
       const localNewLoad = await Load.create(loadData);
       this.load = localNewLoad.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.load;
   }
 
   async updateLoad(
-    where: WhereOptions<ILoadUpdateData>,
-    loadDataToUpdate: ILoadUpdateData,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    where: WhereOptions<IUpdateLoad>,
+    loadDataToUpdate: IUpdateLoad,
+  ): Promise<object> {
     try {
-      const toUpdateData: ILoadUpdateData = generateUpdateLoadObject(
-        loadDataToUpdate,
-      );
-
-      const updatedLoad: object = await Load.update(toUpdateData, {
+      const updatedLoad: object = await Load.update(loadDataToUpdate, {
         where,
       });
 
-      this.load = updatedLoad;
+      this.updatedLoads = updatedLoad;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
-    return this.load;
+    return this.updatedLoads;
   }
 
-  async deleteLoad(
-    where: WhereOptions<ILoadDestroyData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  async deleteLoad(where: WhereOptions<IDeleteLoad>): Promise<number> {
     try {
       const destroyedLoad: number = await Load.destroy({
         where,
       });
 
-      this.load = destroyedLoad;
+      this.deletedLoads = destroyedLoad;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.load;
+    return this.deletedLoads;
   }
 
-  async getLoad(
-    where: WhereOptions<ILoadGetData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  async getLoad(where: WhereOptions<IGetLoad>): Promise<ICreateLoad> {
     try {
       const load = await Load.findOne({
         where,
+        include: { association: 'queue' },
       });
 
-      this.load = load.get();
+      this.load = {
+        ...load.get(),
+        queue: load.get().queue ? load.get().queue.get() : null,
+      };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.load;
   }
 
   async getLoads(
-    where?: WhereOptions<ILoadGetData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+    limit: number | null,
+    where?: WhereOptions<IGetLoad>,
+  ): Promise<ILoadReturn[]> {
     try {
       let loads: any;
 
       if (!where) {
-        loads = await Load.findAll();
+        if (limit) {
+          loads = await Load.findAll({
+            limit,
+            include: { association: 'queue' },
+          });
+        } else {
+          loads = await Load.findAll({
+            include: { association: 'queue' },
+          });
+        }
+      } else if (limit) {
+        loads = await Load.findAll({
+          where,
+          limit,
+          include: { association: 'queue' },
+        });
       } else {
         loads = await Load.findAll({
           where,
+          include: { association: 'queue' },
         });
       }
 
-      const mapedLoads = loads.map((load) => load.get());
+      const mapedLoads: ILoadReturn[] = loads.map((load) => ({
+        ...load.get(),
+        queue: load.get().queue ? load.get().queue.get() : null,
+      }));
 
-      this.load = mapedLoads;
+      this.loads = mapedLoads;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.load;
+    return this.loads;
+  }
+
+  // Contact Complement methods
+
+  async createContactComplement(
+    contactComplementData: ICreateContactComplement,
+  ): Promise<ICreateContactComplement> {
+    try {
+      const localNewContactComplement = await ContactComplement.create(
+        contactComplementData,
+      );
+      this.contactComplement = localNewContactComplement.get();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.contactComplement;
+  }
+
+  async updateContactComplement(
+    where: WhereOptions<IUpdateContactComplement>,
+    loadDataToUpdate: IUpdateContactComplement,
+  ): Promise<object> {
+    try {
+      const updatedContactsComplement: object = await ContactComplement.update(
+        loadDataToUpdate,
+        {
+          where,
+        },
+      );
+
+      this.updatedContactsComplement = updatedContactsComplement;
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.updatedContactsComplement;
+  }
+
+  async deleteContactComplement(
+    where: WhereOptions<IDeleteContactComplement>,
+  ): Promise<number> {
+    try {
+      const destroyedContactsComplement: number = await ContactComplement.destroy(
+        {
+          where,
+        },
+      );
+
+      this.deletedContactsComplement = destroyedContactsComplement;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedContactsComplement;
+  }
+
+  async getContactComplement(
+    where: WhereOptions<IContactComplementGetData>,
+  ): Promise<ICreateContactComplement> {
+    try {
+      const contactComplement = await ContactComplement.findOne({
+        where,
+        include: { association: 'contact' },
+      });
+
+      this.contactComplement = {
+        ...contactComplement.get(),
+        contact: contactComplement.get().contact
+          ? contactComplement.get().contact.get()
+          : null,
+      };
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.contactComplement;
+  }
+
+  async getContactsComplement(
+    limit: number | null,
+    where?: WhereOptions<IContactComplementGetData>,
+  ): Promise<IContactComplementGetData[]> {
+    try {
+      let contactsComplement: any;
+
+      if (!where) {
+        if (limit) {
+          contactsComplement = await ContactComplement.findAll({
+            limit,
+            include: { association: 'contact' },
+          });
+        } else {
+          contactsComplement = await ContactComplement.findAll({
+            include: { association: 'contact' },
+          });
+        }
+      } else if (limit) {
+        contactsComplement = await ContactComplement.findAll({
+          where,
+          limit,
+          include: { association: 'contact' },
+        });
+      } else {
+        contactsComplement = await ContactComplement.findAll({
+          where,
+          include: { association: 'contact' },
+        });
+      }
+
+      const mapedContactsComplement: IContactComplementGetData[] = contactsComplement.map(
+        (contactComplement) => ({
+          ...contactComplement.get(),
+          contact: contactComplement.get().contact
+            ? contactComplement.get().contact.get()
+            : null,
+        }),
+      );
+
+      this.contactsComplement = mapedContactsComplement;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.contactsComplement;
+  }
+
+  // Contact Email methods
+
+  async createContactEmail(
+    ContactEmailData: ICreateContactEmail,
+  ): Promise<ICreateContactEmail> {
+    try {
+      const localNewContactEmail = await ContactEmail.create(ContactEmailData);
+      this.contactEmail = localNewContactEmail.get();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.contactEmail;
+  }
+
+  async updateContactEmail(
+    where: WhereOptions<IUpdateContactEmail>,
+    loadDataToUpdate: IUpdateContactEmail,
+  ): Promise<object> {
+    try {
+      const updatedContactsEmail: object = await ContactEmail.update(
+        loadDataToUpdate,
+        {
+          where,
+        },
+      );
+
+      this.updatedContactsEmail = updatedContactsEmail;
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.updatedContactsEmail;
+  }
+
+  async deleteContactEmail(
+    where: WhereOptions<IDeleteContactEmail>,
+  ): Promise<number> {
+    try {
+      const destroyedContactsEmail: number = await ContactEmail.destroy({
+        where,
+      });
+
+      this.deletedContactsEmail = destroyedContactsEmail;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedContactsEmail;
+  }
+
+  async getContactEmail(
+    where: WhereOptions<IContactEmailGetData>,
+  ): Promise<ICreateContactEmail> {
+    try {
+      const contactEmail = await ContactEmail.findOne({
+        where,
+        include: { association: 'contact' },
+      });
+
+      this.contactEmail = {
+        ...contactEmail.get(),
+        contact: contactEmail.get().contact
+          ? contactEmail.get().contact.get()
+          : null,
+      };
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.contactEmail;
+  }
+
+  async getContactsEmail(
+    limit: number | null,
+    where?: WhereOptions<IContactEmailGetData>,
+  ): Promise<IContactEmailGetData[]> {
+    try {
+      let contactsEmail: any;
+
+      if (!where) {
+        if (limit) {
+          contactsEmail = await ContactEmail.findAll({
+            limit,
+            include: { association: 'contact' },
+          });
+        } else {
+          contactsEmail = await ContactEmail.findAll({
+            include: { association: 'contact' },
+          });
+        }
+      } else if (limit) {
+        contactsEmail = await ContactEmail.findAll({
+          where,
+          limit,
+          include: { association: 'contact' },
+        });
+      } else {
+        contactsEmail = await ContactEmail.findAll({
+          where,
+          include: { association: 'contact' },
+        });
+      }
+
+      const mapedContactsEmail: IContactEmailGetData[] = contactsEmail.map(
+        (contactEmail) => ({
+          ...contactEmail.get(),
+          contact: contactEmail.get().contact
+            ? contactEmail.get().contact.get()
+            : null,
+        }),
+      );
+
+      this.contactsEmail = mapedContactsEmail;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.contactsEmail;
+  }
+
+  // Contact Phone methods
+
+  async createContactPhone(
+    contactPhoneData: ICreateContactPhone,
+  ): Promise<ICreateContactPhone> {
+    try {
+      const localNewContactPhone = await ContactPhone.create(contactPhoneData);
+      this.contactPhone = localNewContactPhone.get();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.contactPhone;
+  }
+
+  async updateContactPhone(
+    where: WhereOptions<IUpdateContactPhone>,
+    loadDataToUpdate: IUpdateContactPhone,
+  ): Promise<object> {
+    try {
+      const updatedContactsPhone: object = await ContactPhone.update(
+        loadDataToUpdate,
+        {
+          where,
+        },
+      );
+
+      this.updatedContactsPhone = updatedContactsPhone;
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.updatedContactsPhone;
+  }
+
+  async deleteContactPhone(
+    where: WhereOptions<IDeleteContactPhone>,
+  ): Promise<number> {
+    try {
+      const destroyedContactsPhone: number = await ContactPhone.destroy({
+        where,
+      });
+
+      this.deletedContactsPhone = destroyedContactsPhone;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedContactsPhone;
+  }
+
+  async getContactPhone(
+    where: WhereOptions<IContactPhoneGetData>,
+  ): Promise<ICreateContactPhone> {
+    try {
+      const contactPhone = await ContactPhone.findOne({
+        where,
+        include: { association: 'contact' },
+      });
+
+      this.contactPhone = {
+        ...contactPhone.get(),
+        contact: contactPhone.get().contact
+          ? contactPhone.get().contact.get()
+          : null,
+      };
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.contactPhone;
+  }
+
+  async getContactsPhone(
+    limit: number | null,
+    where?: WhereOptions<IContactPhoneGetData>,
+  ): Promise<IContactPhoneGetData[]> {
+    try {
+      let contactsPhone: any;
+
+      if (!where) {
+        if (limit) {
+          contactsPhone = await ContactPhone.findAll({
+            limit,
+            include: { association: 'contact' },
+          });
+        } else {
+          contactsPhone = await ContactPhone.findAll({
+            include: { association: 'contact' },
+          });
+        }
+      } else if (limit) {
+        contactsPhone = await ContactPhone.findAll({
+          where,
+          limit,
+          include: { association: 'contact' },
+        });
+      } else {
+        contactsPhone = await ContactPhone.findAll({
+          where,
+          include: { association: 'contact' },
+        });
+      }
+
+      const mapedContactsPhone: IContactPhoneGetData[] = contactsPhone.map(
+        (contactPhone) => ({
+          ...contactPhone.get(),
+          contact: contactPhone.get().contact
+            ? contactPhone.get().contact.get()
+            : null,
+        }),
+      );
+
+      this.contactsPhone = mapedContactsPhone;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.contactsPhone;
   }
 
   // Contact methods
-  async createContact(
-    contactData: IContactData,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  async createContact(contactData: ICreateContact): Promise<ICreateContact> {
     try {
       const localNewContact = await Contact.create(contactData);
       this.contact = localNewContact.get();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.contact;
   }
 
   async updateContact(
-    where: WhereOptions<IContactUpdateData>,
-    contactDataToUpdate: IContactUpdateData,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+    where: WhereOptions<IUpdateContact>,
+    contactDataToUpdate: IUpdateContact,
+  ): Promise<object> {
     try {
-      const toUpdateData: IContactUpdateData = generateUpdateContactObject(
-        contactDataToUpdate,
-      );
-
-      const updatedContact: object = await Contact.update(toUpdateData, {
+      const updatedContact: object = await Contact.update(contactDataToUpdate, {
         where,
       });
 
-      this.contact = updatedContact;
+      this.updatedContacts = updatedContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
-    return this.contact;
+    return this.updatedContacts;
   }
 
-  async deleteContact(
-    where: WhereOptions<IContactDestroyData>,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  async deleteContact(where: WhereOptions<IDeleteContact>): Promise<number> {
     try {
       const destroyedContact: number = await Contact.destroy({
         where,
       });
 
-      this.contact = destroyedContact;
+      this.deletedContacts = destroyedContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.contact;
+    return this.deletedContacts;
   }
 
   async getContact(
     where: WhereOptions<IContactGetData>,
-  ): Promise<IContactDataReturn | object | number | IContactDataReturn[]> {
+  ): Promise<IContactReturn> {
     try {
       const contact = await Contact.findOne({
         where,
+        include: [
+          { association: 'load' },
+          { association: 'contact_complement' },
+          { association: 'contact_email' },
+          { association: 'contact_phone' },
+        ],
       });
-
-      this.contact = contact.get();
+      this.contact = {
+        ...contact.get(),
+        load: contact.get().load ? contact.get().load.get() : null,
+        contact_complement: contact.get().contact_complement
+          ? contact
+            .get()
+            .contact_complement.map((complement) => complement.get())
+          : null,
+        contact_email: contact.get().contact_email
+          ? contact.get().contact_email.map((email) => email.get())
+          : null,
+        contact_phone: contact.get().contact_phone
+          ? contact.get().contact_phone.map((phone) => phone.get())
+          : null,
+      };
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.contact;
   }
 
   async getContacts(
+    limit: number | null,
     where?: WhereOptions<IContactGetData>,
-  ): Promise<ILoadDataReturn | object | number | ILoadDataReturn[]> {
+  ): Promise<IContactReturn[]> {
     try {
       let contacts: any;
 
       if (!where) {
-        contacts = await Contact.findAll();
+        if (limit) {
+          contacts = await Contact.findAll({
+            limit,
+            include: [
+              { association: 'load' },
+              { association: 'contact_complement' },
+              { association: 'contact_email' },
+              { association: 'contact_phone' },
+            ],
+          });
+        } else {
+          contacts = await Contact.findAll({
+            include: [
+              { association: 'load' },
+              { association: 'contact_complement' },
+              { association: 'contact_email' },
+              { association: 'contact_phone' },
+            ],
+          });
+        }
+      } else if (limit) {
+        contacts = await Contact.findAll({
+          where,
+          limit,
+          include: [
+            { association: 'load' },
+            { association: 'contact_complement' },
+            { association: 'contact_email' },
+            { association: 'contact_phone' },
+          ],
+        });
       } else {
         contacts = await Contact.findAll({
           where,
+          include: [
+            { association: 'load' },
+            { association: 'contact_complement' },
+            { association: 'contact_email' },
+            { association: 'contact_phone' },
+          ],
         });
       }
 
-      const mapedContacts = contacts.map((contact) => contact.get());
+      const mapedContacts: IContactReturn[] = contacts.map((contact) => ({
+        ...contact.get(),
+        load: contact.get().load ? contact.get().load.get() : null,
+        contact_complement: contact.get().contact_complement
+          ? contact
+            .get()
+            .contact_complement.map((complement) => complement.get())
+          : null,
+        contact_email: contact.get().contact_email
+          ? contact.get().contact_email.map((email) => email.get())
+          : null,
+        contact_phone: contact.get().contact_phone
+          ? contact.get().contact_phone.map((phone) => phone.get())
+          : null,
+      }));
 
-      this.contact = mapedContacts;
+      this.contacts = mapedContacts;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.contact;
-  }
-
-  // Contact Data methods
-  async createContactData(
-    contactDataData: IContactDataData,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const localNewContactData = await ContactData.create(contactDataData);
-      this.contactData = localNewContactData.get();
-    } catch (err) {
-      error(err);
-    }
-    return this.contactData;
-  }
-
-  async updateContactData(
-    where: WhereOptions<IContactDataUpdateData>,
-    contactDataToUpdate: IContactDataUpdateData,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const toUpdateData: IContactDataUpdateData = generateUpdateContactDataObject(
-        contactDataToUpdate,
-      );
-
-      const updatedContactData: object = await ContactData.update(
-        toUpdateData,
-        {
-          where,
-        },
-      );
-
-      this.contactData = updatedContactData;
-    } catch (err) {
-      error(err);
-    }
-    return this.contactData;
-  }
-
-  async deleteContactData(
-    where: WhereOptions<IContactDataDestroyData>,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const destroyedContactData: number = await ContactData.destroy({
-        where,
-      });
-
-      this.contactData = destroyedContactData;
-    } catch (err) {
-      error(err);
-    }
-
-    return this.contactData;
-  }
-
-  async getContactData(
-    where: WhereOptions<IContactDataGetData>,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      const contactData = await Contact.findOne({
-        where,
-      });
-
-      this.contactData = contactData.get();
-    } catch (err) {
-      error(err);
-    }
-
-    return this.contactData;
-  }
-
-  async getContactsData(
-    where?: WhereOptions<IContactDataGetData>,
-  ): Promise<
-    IContactDataDataReturn | object | number | IContactDataDataReturn[]
-  > {
-    try {
-      let contactsData: any;
-
-      if (!where) {
-        contactsData = await Contact.findAll();
-      } else {
-        contactsData = await Contact.findAll({
-          where,
-        });
-      }
-
-      const mapedContactsData = contactsData.map(
-        (contactData) => contactData.get,
-      );
-
-      this.contactData = mapedContactsData;
-    } catch (err) {
-      error(err);
-    }
-
-    return this.contactData;
+    return this.contacts;
   }
 
   // MongoDB
   // Load Info methods
   async createLoadInfo(
-    loadInfoData: ILoadInfoData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+    loadInfoData: ICreateLoadInfo,
+  ): Promise<ICreateLoadInfo> {
     try {
       const newLoadInfo = new LoadInfo(loadInfoData);
 
       this.loadInfo = await newLoadInfo.save();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.loadInfo;
   }
 
   async updateLoadInfo(
-    where: ILoadInfoUpdateData,
-    loadInfoDataToUpdate: ILoadInfoUpdateData,
-  ): Promise<any> {
+    where: FilterQuery<IUpdateLoadInfo>,
+    loadInfoDataToUpdate: IUpdateLoadInfo,
+  ): Promise<IUpdateLoadInfo | null> {
     try {
-      const toUpdateData: ILoadInfoUpdateData = generateUpdateLoadInfoDataObject(
-        loadInfoDataToUpdate,
-      );
-
-      const updatedLoadInfo: any = await LoadInfo.findOneAndUpdate(
+      const updatedLoadInfo: IUpdateLoadInfo = await LoadInfo.findOneAndUpdate(
         where,
-        toUpdateData,
+        loadInfoDataToUpdate,
         { runValidators: true },
       );
 
-      this.loadInfo = updatedLoadInfo;
+      this.updatedLoadInfo = updatedLoadInfo;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    this.loadInfo;
+    return this.updatedLoadInfo;
   }
 
   async deleteLoadInfo(
-    where: ILoadInfoDestroyData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+    where: FilterQuery<IDeleteLoadInfo>,
+  ): Promise<IDeleteLoadInfo | null> {
     try {
-      const destroyedLoadInfo: ILoadInfoDestroyData = await LoadInfo.findOneAndDelete(
+      const deletedLoadInfo: IDeleteLoadInfo = await LoadInfo.findOneAndDelete(
         where,
       );
 
-      this.loadInfo = destroyedLoadInfo;
+      this.deletedLoadInfo = deletedLoadInfo;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.loadInfo;
+    return this.deletedLoadInfo;
   }
 
-  async getLoadInfo(
-    where: ILoadInfoGetData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+  async getLoadInfo(where: IGetLoadInfo): Promise<IGetLoadInfo> {
     try {
-      const loadInfo = await LoadInfo.findOne(where);
+      const loadInfo: IGetLoadInfo = await LoadInfo.findOne(where);
 
       this.loadInfo = loadInfo;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loadInfo;
   }
 
   async getLoadInfosData(
-    where?: ILoadInfoGetData,
-  ): Promise<
-    | ILoadInfoDataReturn
-    | object
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn
-    | ILoadInfoDataReturn[]
-  > {
+    limit: number | null,
+    where?: IGetLoadInfo,
+  ): Promise<IGetLoadInfo[]> {
     try {
-      let loadInfosData: any;
+      let loadInfosData: IGetLoadInfo[];
 
-      if (!where) {
+      if (limit) {
+        if (!where) {
+          loadInfosData = await LoadInfo.find().limit(limit);
+        } else {
+          loadInfosData = await LoadInfo.find(where).limit(limit);
+        }
+      } else if (!where) {
         loadInfosData = await LoadInfo.find();
       } else {
         loadInfosData = await LoadInfo.find(where);
       }
 
-      this.loadInfo = loadInfosData;
+      this.loadInfos = loadInfosData;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.loadInfo;
+    return this.loadInfos;
   }
 
   // Load Status methods
   async createLoadStatus(
-    loadStatusData: ILoadStatusData,
-  ): Promise<
-    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
-  > {
+    loadStatusData: ICreateLoadStatus,
+  ): Promise<ICreateLoadStatus> {
     try {
       const newLoadStatus = new LoadStatus(loadStatusData);
+
       this.loadStatus = await newLoadStatus.save();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.loadStatus;
   }
 
   async updateLoadStatus(
-    where: ILoadStatusUpdateData,
-    loadStatusDataToUpdate: ILoadStatusUpdateData,
-  ): Promise<any> {
+    where: FilterQuery<IUpdateLoadStatus>,
+    loadStatusDataToUpdate: IUpdateLoadStatus,
+  ): Promise<IUpdateLoadStatus | null> {
     try {
-      const toUpdateData: ILoadStatusUpdateData = generateUpdateLoadStatusDataObject(
-        loadStatusDataToUpdate,
-      );
-
-      const updatedLoadStatus: any = await LoadInfo.findOneAndUpdate(
+      const updatedLoadStatus: IUpdateLoadStatus = await LoadInfo.findOneAndUpdate(
         where,
-        toUpdateData,
+        loadStatusDataToUpdate,
         { runValidators: true },
       );
 
-      this.loadStatus = updatedLoadStatus;
+      this.updatedLoadStatus = updatedLoadStatus;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    this.loadStatus;
+    return this.updatedLoadStatus;
   }
 
   async deleteLoadStatus(
-    where: ILoadStatusDestroyData,
-  ): Promise<
-    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
-  > {
+    where: FilterQuery<IDeleteLoadStatus>,
+  ): Promise<IDeleteLoadStatus | null> {
     try {
-      const destroyedLoadStatus: ILoadStatusDestroyData = await LoadStatus.findOneAndDelete(
+      const destroyedLoadStatus: IDeleteLoadStatus = await LoadStatus.findOneAndDelete(
         where,
       );
 
-      this.loadStatus = destroyedLoadStatus;
+      this.deletedLoadStatus = destroyedLoadStatus;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.loadStatus;
+    return this.deletedLoadStatus;
   }
 
-  async getLoadStatus(where: ILoadInfoData): Promise<object> {
+  async getLoadStatus(
+    where: FilterQuery<IGetLoadStatus>,
+  ): Promise<IGetLoadStatus> {
     try {
-      const loadStatus = await LoadInfo.findOne(where);
+      const loadStatus: IGetLoadStatus = await LoadInfo.findOne(where);
 
       this.loadStatus = loadStatus;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.loadStatus;
   }
 
   async getLoadStatuses(
-    where?: ILoadStatusGetData,
-  ): Promise<
-    ILoadStatusDataReturn | ILoadStatusUpdateData | ILoadStatusGetData[]
-  > {
+    limit: number | null,
+    where?: FilterQuery<IGetLoadStatus>,
+  ): Promise<IGetLoadStatus[] | null> {
     try {
       let loadStatusesData: any;
 
-      if (!where) {
+      if (limit) {
+        if (!where) {
+          loadStatusesData = await LoadInfo.find().limit(limit);
+        } else {
+          loadStatusesData = await LoadInfo.find(where).limit(limit);
+        }
+      } else if (!where) {
         loadStatusesData = await LoadInfo.find();
       } else {
         loadStatusesData = await LoadInfo.find(where);
@@ -659,95 +1057,416 @@ export default class OrchyBase {
 
       this.loadStatus = loadStatusesData;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.loadStatus;
+    return this.loadStatuses;
   }
 
   // Queue Contact methods
+
+  async countQueueContacts(
+    where?: FilterQuery<IGetQueueContact>,
+  ): Promise<IGetQueueContact[]> {
+
+    let amountQueueContact = null;
+    try {
+      if (!where) {
+        amountQueueContact = await QueueContact.countDocuments();
+      }else{
+        amountQueueContact = await QueueContact.countDocuments(where);
+      }
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return amountQueueContact;
+  }
+
+
+
+
   async createQueueContact(
-    queueContactData: IQueueContactData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    queueContactData: ICreateQueueContact,
+  ): Promise<ICreateQueueContact> {
     try {
       const newQueueContact = new QueueContact(queueContactData);
+
       this.queueContact = await newQueueContact.save();
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
     return this.queueContact;
   }
 
   async updateQueueContact(
-    where: IQueueContactUpdateData,
-    queueContactDataToUpdate: IQueueContactUpdateData,
-  ): Promise<any> {
+    where: FilterQuery<IUpdateQueueContact>,
+    queueContactDataToUpdate: IUpdateQueueContact,
+  ): Promise<IUpdateQueueContact> {
     try {
-      const toUpdateData: IQueueContactUpdateData = generateUpdateQueueContactDataObject(
-        queueContactDataToUpdate,
-      );
-
-      const updatedQueueContact: any = await QueueContact.findOneAndUpdate(
+      const updatedQueueContact: IUpdateQueueContact = await QueueContact.findOneAndUpdate(
         where,
-        toUpdateData,
+        queueContactDataToUpdate,
         { runValidators: true },
       );
 
-      this.queueContact = updatedQueueContact;
+      this.updatedQueueContact = updatedQueueContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    this.queueContact;
+    return this.updatedQueueContact;
   }
 
   async deleteQueueContact(
-    where: IQueueContactDestroyData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    where: FilterQuery<IDeleteQueueContact>,
+  ): Promise<IDeleteQueueContact> {
     try {
-      const destroyedQueueContact: IQueueContactDestroyData = await QueueContact.findOneAndDelete(
+      const destroyedQueueContact: IDeleteQueueContact = await QueueContact.findOneAndDelete(
         where,
       );
 
-      this.queueContact = destroyedQueueContact;
+      this.deletedQueueContact = destroyedQueueContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.queueContact;
+    return this.deletedQueueContact;
   }
 
   async getQueueContact(
-    where: IQueueContactGetData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    where: ICreateQueueContact,
+  ): Promise<ICreateQueueContact> {
     try {
       const queueContact = await QueueContact.findOne(where);
 
       this.queueContact = queueContact;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
     return this.queueContact;
   }
 
   async getQueueContacts(
-    where?: IQueueContactGetData,
-  ): Promise<object | IQueueContactDataReturn | IQueueContactDataReturn[]> {
+    limit: number | null,
+    where?: FilterQuery<IGetQueueContact>,
+  ): Promise<IGetQueueContact[]> {
     try {
       let queueContactsData: any;
 
-      if (!where) {
+      if (limit) {
+        if (!where) {
+          queueContactsData = await QueueContact.find().limit(limit);
+        } else {
+          queueContactsData = await QueueContact.find(where).limit(limit);
+        }
+      } else if (!where) {
         queueContactsData = await QueueContact.find();
       } else {
         queueContactsData = await QueueContact.find(where);
       }
 
-      this.queueContact = queueContactsData;
+      this.queueContacts = queueContactsData;
     } catch (err) {
-      error(err);
+      throw Error(err);
     }
 
-    return this.queueContact;
+    return this.queueContacts;
   }
+
+
+
+
+  // Queue Contact Report methods
+  async createQueueContactReport(
+    queueContactReportData: ICreateQueueContactReport,
+  ): Promise<ICreateQueueContactReport> {
+    try {
+      const newQueueContactReport = new QueueContactReport(queueContactReportData);
+
+      this.queueContactReport = await newQueueContactReport.save();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.queueContactReport;
+  }
+
+
+  async updateQueueContactReport(
+    where: FilterQuery<IUpdateQueueContactReport>,
+    queueContactReportDataToUpdate: IUpdateQueueContactReport,
+  ): Promise<IUpdateQueueContactReport> {
+    try {
+      const updatedQueueContactReport: IUpdateQueueContactReport = await QueueContactReport.findOneAndUpdate(
+        where,
+        queueContactReportDataToUpdate,
+        { runValidators: true },
+      );
+
+      this.updatedQueueContactReport = updatedQueueContactReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.updatedQueueContactReport;
+  }
+
+  async deleteQueueContactReport(
+    where: FilterQuery<IDeleteQueueContactReport>,
+  ): Promise<IDeleteQueueContactReport> {
+    try {
+      const destroyedQueueContactReport: IDeleteQueueContactReport = await QueueContactReport.findOneAndDelete(
+        where,
+      );
+
+      this.deletedQueueContactReport = destroyedQueueContactReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedQueueContactReport;
+  }
+
+  async getQueueContactReport(
+    where: ICreateQueueContactReport,
+  ): Promise<ICreateQueueContactReport> {
+    try {
+      const queueContactReport = await QueueContactReport.findOne(where);
+
+      this.queueContactReport = queueContactReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.queueContactReport;
+  }
+
+  async getQueueContactReports(
+    limit: number | null,
+    where?: FilterQuery<IGetQueueContactReport>,
+  ): Promise<IGetQueueContactReport[]> {
+    try {
+      let queueContactReportsData: any;
+
+      if (limit) {
+        if (!where) {
+          queueContactReportsData = await QueueContactReport.find().limit(limit);
+        } else {
+          queueContactReportsData = await QueueContactReport.find(where).limit(limit);
+        }
+      } else if (!where) {
+        queueContactReportsData = await QueueContactReport.find();
+      } else {
+        queueContactReportsData = await QueueContactReport.find(where);
+      }
+
+      this.queueContactReports = queueContactReportsData;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.queueContactReports;
+  }
+
+
+   // Flow Report methods
+   async createFlowReport(
+    flowReportData: ICreateFlowReport,
+  ): Promise<ICreateFlowReport> {
+    try {
+      const newFlowReport = new FlowReport(flowReportData);
+
+      this.flowReport = await newFlowReport.save();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.flowReport;
+  }
+
+
+  async updateFlowReport(
+    where: FilterQuery<IUpdateFlowReport>,
+    flowReportDataToUpdate: IUpdateFlowReport,
+  ): Promise<IUpdateFlowReport> {
+    try {
+      const updatedFlowReport: IUpdateFlowReport = await FlowReport.findOneAndUpdate(
+        where,
+        flowReportDataToUpdate,
+        { runValidators: true },
+      );
+
+      this.updatedFlowReport = updatedFlowReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.updatedFlowReport;
+  }
+
+  async deleteFlowReport(
+    where: FilterQuery<IDeleteFlowReport>,
+  ): Promise<IDeleteFlowReport> {
+    try {
+      const destroyedFlowReport: IDeleteFlowReport = await FlowReport.findOneAndDelete(
+        where,
+      );
+
+      this.deletedFlowReport = destroyedFlowReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedFlowReport;
+  }
+
+  async getFlowReport(
+    where: ICreateFlowReport,
+  ): Promise<ICreateFlowReport> {
+    try {
+      const flowReport = await FlowReport.findOne(where);
+
+      this.flowReport = flowReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.flowReport;
+  }
+
+  async getFlowReports(
+    limit: number | null,
+    where?: FilterQuery<IGetFlowReport>,
+  ): Promise<IGetFlowReport[]> {
+    try {
+      let flowReportsData: any;
+
+      if (limit) {
+        if (!where) {
+          flowReportsData = await FlowReport.find().limit(limit);
+        } else {
+          flowReportsData = await FlowReport.find(where).limit(limit);
+        }
+      } else if (!where) {
+        flowReportsData = await FlowReport.find();
+      } else {
+        flowReportsData = await FlowReport.find(where);
+      }
+
+      this.flowReports = flowReportsData;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.flowReports;
+  }
+
+
+
+     // Flow Status methods
+     async createFlowStatus(
+      flowStatusData: ICreateFlowStatus,
+    ): Promise<ICreateFlowStatus> {
+      try {
+        const newFlowStatus = new FlowStatus(flowStatusData);
+  
+        this.flowStatus = await newFlowStatus.save();
+      } catch (err) {
+        throw Error(err);
+      }
+      return this.flowStatus;
+    }
+  
+  
+    async updateFlowStatus(
+      where: FilterQuery<IUpdateFlowStatus>,
+      flowStatusDataToUpdate: IUpdateFlowStatus,
+    ): Promise<IUpdateFlowStatus> {
+      try {
+        const updatedFlowStatus: IUpdateFlowStatus = await FlowStatus.findOneAndUpdate(
+          where,
+          flowStatusDataToUpdate,
+          { runValidators: true },
+        );
+  
+        this.updatedFlowStatus = updatedFlowStatus;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.updatedFlowStatus;
+    }
+  
+    async deleteFlowStatus(
+      where: FilterQuery<IDeleteFlowStatus>,
+    ): Promise<IDeleteFlowStatus> {
+      try {
+        const destroyedFlowStatus: IDeleteFlowStatus = await FlowStatus.findOneAndDelete(
+          where,
+        );
+  
+        this.deletedFlowStatus = destroyedFlowStatus;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.deletedFlowStatus;
+    }
+  
+    async getFlowStatus(
+      where: ICreateFlowStatus,
+    ): Promise<ICreateFlowStatus> {
+      try {
+        const flowStatus = await FlowStatus.findOne(where);
+  
+        this.flowStatus = flowStatus;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.flowStatus;
+    }
+  
+    async getFlowsStatus(
+      limit: number | null,
+      where?: FilterQuery<IGetFlowStatus>,
+    ): Promise<IGetFlowStatus[]> {
+      try {
+        let flowsStatusData: any;
+  
+        if (limit) {
+          if (!where) {
+            flowsStatusData = await FlowStatus.find().limit(limit);
+          } else {
+            flowsStatusData = await FlowStatus.find(where).limit(limit);
+          }
+        } else if (!where) {
+          flowsStatusData = await FlowStatus.find();
+        } else {
+          flowsStatusData = await FlowStatus.find(where);
+        }
+  
+        this.flowsStatus = flowsStatusData;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.flowsStatus;
+    }
+    
+    
+  
+    async customQuerySequelize(query: string):Promise<any[]>{
+
+      try{
+        const queryResponse = await sequelize.query(query, { type: QueryTypes.SELECT });
+        this.querySequelizeResponse = queryResponse;
+
+      }catch(err){
+        throw Error(err); 
+      }
+      return this.querySequelizeResponse;
+    }
+   
+
 }

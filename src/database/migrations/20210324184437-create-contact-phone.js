@@ -1,33 +1,34 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('contacts', {
-      id_contact: {
+    await queryInterface.createTable('contact_phones', {
+      id_contact_phone: {
         type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
-      id_load: {
+      id_contact: {
         type: Sequelize.BIGINT,
         allowNull: false,
         references: {
-          model: 'loads',
-          key: 'id_load',
+          model: 'contacts',
+          key: 'id_contact',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      name: {
-        type: Sequelize.STRING,
+      data_type: {
+        type: Sequelize.ENUM(['cellular', 'landline']),
         allowNull: false,
+        unique: false,
       },
-      key: {
+      contact_data: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
+        unique: false,
       },
       state: {
-        type: Sequelize.ENUM(['pending', 'working', 'done']),
+        type: Sequelize.ENUM(['pending', 'sent', 'failed']),
         allowNull: false,
         unique: false,
       },
@@ -43,6 +44,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('contacts');
+    await queryInterface.dropTable('contact_phones');
   },
 };

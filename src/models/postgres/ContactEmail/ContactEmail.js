@@ -1,38 +1,28 @@
 import { DataTypes, Model } from 'sequelize';
 
-class Queue extends Model {
+class ContactEmail extends Model {
   static init(sequelize) {
     return super.init(
       {
-        id_queue: {
+        id_contact_email: {
           type: DataTypes.BIGINT,
           defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,
         },
-        id_load: {
+        id_contact: {
           type: DataTypes.BIGINT,
           allowNull: false,
           unique: false,
         },
-        register: {
-          type: DataTypes.DATE,
-          allowNull: false,
-          unique: false,
-        },
-        schedule: {
-          type: DataTypes.DATE,
+        contact_data: {
+          type: DataTypes.STRING,
           allowNull: false,
           unique: false,
         },
         state: {
-          type: DataTypes.ENUM(['pending', 'working', 'done']),
-          allowNull: false,
-          unique: false,
-        },
-        active: {
-          type: DataTypes.BOOLEAN,
+          type: DataTypes.ENUM(['pending', 'sent', 'failed']),
           allowNull: false,
           unique: false,
         },
@@ -55,8 +45,8 @@ class Queue extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Load, { foreignKey: 'id_load', as: 'load' });
+    this.belongsTo(models.Contact, { foreignKey: 'id_contact', as: 'contact' });
   }
 }
 
-export default Queue;
+export default ContactEmail;

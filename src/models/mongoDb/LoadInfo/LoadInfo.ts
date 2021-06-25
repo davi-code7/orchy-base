@@ -7,10 +7,10 @@ const LoadInfoSchema = new mongoose.Schema({
     required: true,
   },
   id_load: {
-    type: String,
+    type: Number,
     required: true,
   },
-  id_org: {
+  api_key: {
     type: String,
     required: true,
   },
@@ -27,21 +27,29 @@ const LoadInfoSchema = new mongoose.Schema({
     required: true,
   },
   contacts: {
-    type: String,
+    type: Number,
     required: true,
   },
   telephones: {
-    type: String,
+    type: Number,
     required: true,
   },
-  telephones_ddd: {
-    type: [String],
+  emails: {
+    type: Number,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-  },
+  telephones_ddd: [
+    {
+      ddd: {
+        type: Number,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
   active: {
     type: Boolean,
     required: true,

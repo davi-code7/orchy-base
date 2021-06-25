@@ -6,6 +6,7 @@ class Contact extends Model {
       {
         id_contact: {
           type: DataTypes.BIGINT,
+          defaultValue: DataTypes.DEFAULT,
           primaryKey: true,
           allowNull: true,
           unique: true,
@@ -24,6 +25,11 @@ class Contact extends Model {
           type: DataTypes.STRING,
           allowNull: false,
           unique: true,
+        },
+        state: {
+          type: DataTypes.ENUM(['pending', 'working', 'done']),
+          allowNull: false,
+          unique: false,
         },
         created_at: {
           type: DataTypes.DATE,
@@ -44,10 +50,19 @@ class Contact extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.Load, { foreignKey: 'id_load', as: 'load' });
-    this.hasOne(models.ContactData, {
-      foreignKey: 'id_contact_data',
-      as: 'contact_data',
+    this.belongsTo(models.Load, { foreignKey: 'id_load', as: 'load' });
+
+    this.hasMany(models.ContactComplement, {
+      foreignKey: 'id_contact',
+      as: 'contact_complement',
+    });
+    this.hasMany(models.ContactEmail, {
+      foreignKey: 'id_contact',
+      as: 'contact_email',
+    });
+    this.hasMany(models.ContactPhone, {
+      foreignKey: 'id_contact',
+      as: 'contact_phone',
     });
   }
 }

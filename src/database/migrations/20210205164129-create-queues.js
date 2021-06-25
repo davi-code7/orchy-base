@@ -1,7 +1,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('contacts', {
-      id_contact: {
+    await queryInterface.createTable('queues', {
+      id_queue: {
         type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true,
@@ -17,17 +17,22 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      name: {
-        type: Sequelize.STRING,
+      register: {
+        type: Sequelize.DATE,
         allowNull: false,
+        unique: false,
       },
-      key: {
-        type: Sequelize.STRING,
+      schedule: {
+        type: Sequelize.DATE,
         allowNull: false,
-        unique: true,
       },
       state: {
         type: Sequelize.ENUM(['pending', 'working', 'done']),
+        allowNull: false,
+        unique: false,
+      },
+      active: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
         unique: false,
       },
@@ -43,6 +48,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('contacts');
+    await queryInterface.dropTable('queues');
   },
 };
