@@ -182,6 +182,7 @@ export interface IContactComplementGetData {
 export interface IContactPhoneGetData {
   id_contact_phone?: BigInt;
   id_contact?: BigInt;
+  area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
   state?: 'pending' | 'working' | 'done';
@@ -246,6 +247,7 @@ export interface IDeleteContactEmail {
 export interface ICreateContactPhone {
   id_contact_phone?: BigInt;
   id_contact: BigInt;
+  area_code?: BigInt;
   data_type: 'cellular' | 'landline';
   contact_data: string;
   state: 'pending' | 'working' | 'done';
@@ -256,6 +258,7 @@ export interface ICreateContactPhone {
 export interface IUpdateContactPhone {
   id_contact_phone?: BigInt;
   id_contact?: BigInt;
+  area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
   state?: 'pending' | 'working' | 'done';
@@ -266,6 +269,7 @@ export interface IUpdateContactPhone {
 export interface IDeleteContactPhone {
   id_contact_phone?: BigInt;
   id_contact?: BigInt;
+  area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
   state?: 'pending' | 'working' | 'done';
@@ -478,6 +482,7 @@ export interface ICreateQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -518,6 +523,7 @@ export interface IUpdateQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -558,6 +564,7 @@ export interface IDeleteQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -598,6 +605,7 @@ export interface IGetQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {

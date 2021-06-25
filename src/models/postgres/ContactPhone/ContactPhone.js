@@ -16,6 +16,12 @@ class ContactPhone extends Model {
           allowNull: false,
           unique: false,
         },
+        area_code: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          unique: false,
+        },
+
         data_type: {
           type: DataTypes.ENUM(['cellular', 'landline']),
           allowNull: false,

@@ -1064,6 +1064,28 @@ export default class OrchyBase {
   }
 
   // Queue Contact methods
+
+  async countQueueContacts(
+    where?: FilterQuery<IGetQueueContact>,
+  ): Promise<IGetQueueContact[]> {
+
+    let amountQueueContact = null;
+    try {
+      if (!where) {
+        amountQueueContact = await QueueContact.countDocuments();
+      }else{
+        amountQueueContact = await QueueContact.countDocuments(where);
+      }
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return amountQueueContact;
+  }
+
+
+
+
   async createQueueContact(
     queueContactData: ICreateQueueContact,
   ): Promise<ICreateQueueContact> {
@@ -1431,7 +1453,8 @@ export default class OrchyBase {
   
       return this.flowsStatus;
     }
-  
+    
+    
   
     async customQuerySequelize(query: string):Promise<any[]>{
 
@@ -1443,9 +1466,5 @@ export default class OrchyBase {
         throw Error(err); 
       }
       return this.querySequelizeResponse;
-
-  
     }
-   
 
-}
