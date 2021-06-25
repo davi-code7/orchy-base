@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import './database';
 import { exec } from 'child_process';
-
+import { QueryTypes } from 'sequelize';
+import  sequelize  from './config/database/postgres/index';
 import { WhereOptions } from 'sequelize/types';
 import { FilterQuery } from 'mongoose';
 
@@ -17,9 +18,14 @@ import ContactComplement from './models/postgres/ContactComplement/ContactComple
 import LoadInfo from './models/mongoDb/LoadInfo/LoadInfo';
 import LoadStatus from './models/mongoDb/LoadStatus/LoadStatus';
 import QueueContact from './models/mongoDb/QueueContact/QueueContact';
+import QueueContactReport from './models/mongoDb/QueueContactReport/QueueContactReport';
+import FlowReport from './models/mongoDb/FlowReport/FlowReport';
+import FlowStatus from './models/mongoDb/FlowStatus/FlowStatus';
+
+
 
 import {
-  ICreateQueue,
+   ICreateQueue,
   IUpdateQueue,
   IDeleteQueue,
   IGetQueue,
@@ -58,6 +64,23 @@ import {
   IUpdateQueueContact,
   IDeleteQueueContact,
   IGetQueueContact,
+
+  ICreateFlowReport,
+  IUpdateFlowReport,
+  IDeleteFlowReport,
+  IGetFlowReport,
+
+  ICreateQueueContactReport,
+  IUpdateQueueContactReport,
+  IDeleteQueueContactReport,
+  IGetQueueContactReport,
+
+  ICreateFlowStatus,
+  IUpdateFlowStatus,
+  IDeleteFlowStatus,
+  IGetFlowStatus,
+
+
 } from './interfaces/index';
 
 export default class OrchyBase {
@@ -106,6 +129,25 @@ export default class OrchyBase {
   private deletedQueueContact: IDeleteQueueContact | null;
   private queueContacts: IGetQueueContact[];
 
+  private queueContactReport: ICreateQueueContactReport;
+  private updatedQueueContactReport: IUpdateQueueContactReport | null;
+  private deletedQueueContactReport: IDeleteQueueContactReport | null;
+  private queueContactReports: IGetQueueContactReport[];
+
+
+  private flowReport: ICreateFlowReport;
+  private updatedFlowReport: IUpdateFlowReport | null;
+  private deletedFlowReport: IDeleteFlowReport | null;
+  private flowReports: IGetFlowReport[];
+
+
+  private flowStatus: ICreateFlowStatus;
+  private updatedFlowStatus: IUpdateFlowStatus | null;
+  private deletedFlowStatus: IDeleteFlowStatus | null;
+  private flowsStatus: IGetFlowStatus[];
+  
+  private querySequelizeResponse;
+  
   constructor(mongoDB: boolean) {
     if (mongoDB) {
       connectMongoDB();
@@ -1022,6 +1064,28 @@ export default class OrchyBase {
   }
 
   // Queue Contact methods
+
+  async countQueueContacts(
+    where?: FilterQuery<IGetQueueContact>,
+  ): Promise<IGetQueueContact[]> {
+
+    let amountQueueContact = null;
+    try {
+      if (!where) {
+        amountQueueContact = await QueueContact.countDocuments();
+      }else{
+        amountQueueContact = await QueueContact.countDocuments(where);
+      }
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return amountQueueContact;
+  }
+
+
+
+
   async createQueueContact(
     queueContactData: ICreateQueueContact,
   ): Promise<ICreateQueueContact> {
@@ -1110,4 +1174,299 @@ export default class OrchyBase {
 
     return this.queueContacts;
   }
+
+
+
+
+  // Queue Contact Report methods
+  async createQueueContactReport(
+    queueContactReportData: ICreateQueueContactReport,
+  ): Promise<ICreateQueueContactReport> {
+    try {
+      const newQueueContactReport = new QueueContactReport(queueContactReportData);
+
+      this.queueContactReport = await newQueueContactReport.save();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.queueContactReport;
+  }
+
+
+  async updateQueueContactReport(
+    where: FilterQuery<IUpdateQueueContactReport>,
+    queueContactReportDataToUpdate: IUpdateQueueContactReport,
+  ): Promise<IUpdateQueueContactReport> {
+    try {
+      const updatedQueueContactReport: IUpdateQueueContactReport = await QueueContactReport.findOneAndUpdate(
+        where,
+        queueContactReportDataToUpdate,
+        { runValidators: true },
+      );
+
+      this.updatedQueueContactReport = updatedQueueContactReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.updatedQueueContactReport;
+  }
+
+  async deleteQueueContactReport(
+    where: FilterQuery<IDeleteQueueContactReport>,
+  ): Promise<IDeleteQueueContactReport> {
+    try {
+      const destroyedQueueContactReport: IDeleteQueueContactReport = await QueueContactReport.findOneAndDelete(
+        where,
+      );
+
+      this.deletedQueueContactReport = destroyedQueueContactReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedQueueContactReport;
+  }
+
+  async getQueueContactReport(
+    where: ICreateQueueContactReport,
+  ): Promise<ICreateQueueContactReport> {
+    try {
+      const queueContactReport = await QueueContactReport.findOne(where);
+
+      this.queueContactReport = queueContactReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.queueContactReport;
+  }
+
+  async getQueueContactReports(
+    limit: number | null,
+    where?: FilterQuery<IGetQueueContactReport>,
+  ): Promise<IGetQueueContactReport[]> {
+    try {
+      let queueContactReportsData: any;
+
+      if (limit) {
+        if (!where) {
+          queueContactReportsData = await QueueContactReport.find().limit(limit);
+        } else {
+          queueContactReportsData = await QueueContactReport.find(where).limit(limit);
+        }
+      } else if (!where) {
+        queueContactReportsData = await QueueContactReport.find();
+      } else {
+        queueContactReportsData = await QueueContactReport.find(where);
+      }
+
+      this.queueContactReports = queueContactReportsData;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.queueContactReports;
+  }
+
+
+   // Flow Report methods
+   async createFlowReport(
+    flowReportData: ICreateFlowReport,
+  ): Promise<ICreateFlowReport> {
+    try {
+      const newFlowReport = new FlowReport(flowReportData);
+
+      this.flowReport = await newFlowReport.save();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.flowReport;
+  }
+
+
+  async updateFlowReport(
+    where: FilterQuery<IUpdateFlowReport>,
+    flowReportDataToUpdate: IUpdateFlowReport,
+  ): Promise<IUpdateFlowReport> {
+    try {
+      const updatedFlowReport: IUpdateFlowReport = await FlowReport.findOneAndUpdate(
+        where,
+        flowReportDataToUpdate,
+        { runValidators: true },
+      );
+
+      this.updatedFlowReport = updatedFlowReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.updatedFlowReport;
+  }
+
+  async deleteFlowReport(
+    where: FilterQuery<IDeleteFlowReport>,
+  ): Promise<IDeleteFlowReport> {
+    try {
+      const destroyedFlowReport: IDeleteFlowReport = await FlowReport.findOneAndDelete(
+        where,
+      );
+
+      this.deletedFlowReport = destroyedFlowReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.deletedFlowReport;
+  }
+
+  async getFlowReport(
+    where: ICreateFlowReport,
+  ): Promise<ICreateFlowReport> {
+    try {
+      const flowReport = await FlowReport.findOne(where);
+
+      this.flowReport = flowReport;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.flowReport;
+  }
+
+  async getFlowReports(
+    limit: number | null,
+    where?: FilterQuery<IGetFlowReport>,
+  ): Promise<IGetFlowReport[]> {
+    try {
+      let flowReportsData: any;
+
+      if (limit) {
+        if (!where) {
+          flowReportsData = await FlowReport.find().limit(limit);
+        } else {
+          flowReportsData = await FlowReport.find(where).limit(limit);
+        }
+      } else if (!where) {
+        flowReportsData = await FlowReport.find();
+      } else {
+        flowReportsData = await FlowReport.find(where);
+      }
+
+      this.flowReports = flowReportsData;
+    } catch (err) {
+      throw Error(err);
+    }
+
+    return this.flowReports;
+  }
+
+
+
+     // Flow Status methods
+     async createFlowStatus(
+      flowStatusData: ICreateFlowStatus,
+    ): Promise<ICreateFlowStatus> {
+      try {
+        const newFlowStatus = new FlowStatus(flowStatusData);
+  
+        this.flowStatus = await newFlowStatus.save();
+      } catch (err) {
+        throw Error(err);
+      }
+      return this.flowStatus;
+    }
+  
+  
+    async updateFlowStatus(
+      where: FilterQuery<IUpdateFlowStatus>,
+      flowStatusDataToUpdate: IUpdateFlowStatus,
+    ): Promise<IUpdateFlowStatus> {
+      try {
+        const updatedFlowStatus: IUpdateFlowStatus = await FlowStatus.findOneAndUpdate(
+          where,
+          flowStatusDataToUpdate,
+          { runValidators: true },
+        );
+  
+        this.updatedFlowStatus = updatedFlowStatus;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.updatedFlowStatus;
+    }
+  
+    async deleteFlowStatus(
+      where: FilterQuery<IDeleteFlowStatus>,
+    ): Promise<IDeleteFlowStatus> {
+      try {
+        const destroyedFlowStatus: IDeleteFlowStatus = await FlowStatus.findOneAndDelete(
+          where,
+        );
+  
+        this.deletedFlowStatus = destroyedFlowStatus;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.deletedFlowStatus;
+    }
+  
+    async getFlowStatus(
+      where: ICreateFlowStatus,
+    ): Promise<ICreateFlowStatus> {
+      try {
+        const flowStatus = await FlowStatus.findOne(where);
+  
+        this.flowStatus = flowStatus;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.flowStatus;
+    }
+  
+    async getFlowsStatus(
+      limit: number | null,
+      where?: FilterQuery<IGetFlowStatus>,
+    ): Promise<IGetFlowStatus[]> {
+      try {
+        let flowsStatusData: any;
+  
+        if (limit) {
+          if (!where) {
+            flowsStatusData = await FlowStatus.find().limit(limit);
+          } else {
+            flowsStatusData = await FlowStatus.find(where).limit(limit);
+          }
+        } else if (!where) {
+          flowsStatusData = await FlowStatus.find();
+        } else {
+          flowsStatusData = await FlowStatus.find(where);
+        }
+  
+        this.flowsStatus = flowsStatusData;
+      } catch (err) {
+        throw Error(err);
+      }
+  
+      return this.flowsStatus;
+    }
+    
+    
+  
+    async customQuerySequelize(query: string):Promise<any[]>{
+
+      try{
+        const queryResponse = await sequelize.query(query, { type: QueryTypes.SELECT });
+        this.querySequelizeResponse = queryResponse;
+
+      }catch(err){
+        throw Error(err); 
+      }
+      return this.querySequelizeResponse;
+    }
+   
+
 }

@@ -182,6 +182,7 @@ export interface IContactComplementGetData {
 export interface IContactPhoneGetData {
   id_contact_phone?: BigInt;
   id_contact?: BigInt;
+  area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
   state?: 'pending' | 'working' | 'done';
@@ -208,6 +209,7 @@ export interface IContactReturn {
   state: 'pending' | 'working' | 'done';
   created_at: Date;
   updated_at: null | Date;
+  load: ILoadReturn;
   contact_complement: IContactComplementGetData;
   contact_phone: IContactPhoneGetData;
   contact_email: IContactEmailGetData;
@@ -245,6 +247,7 @@ export interface IDeleteContactEmail {
 export interface ICreateContactPhone {
   id_contact_phone?: BigInt;
   id_contact: BigInt;
+  area_code?: BigInt;
   data_type: 'cellular' | 'landline';
   contact_data: string;
   state: 'pending' | 'working' | 'done';
@@ -255,6 +258,7 @@ export interface ICreateContactPhone {
 export interface IUpdateContactPhone {
   id_contact_phone?: BigInt;
   id_contact?: BigInt;
+  area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
   state?: 'pending' | 'working' | 'done';
@@ -265,6 +269,7 @@ export interface IUpdateContactPhone {
 export interface IDeleteContactPhone {
   id_contact_phone?: BigInt;
   id_contact?: BigInt;
+  area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
   state?: 'pending' | 'working' | 'done';
@@ -477,6 +482,7 @@ export interface ICreateQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -517,6 +523,7 @@ export interface IUpdateQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -557,6 +564,7 @@ export interface IDeleteQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -597,6 +605,7 @@ export interface IGetQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -639,4 +648,227 @@ export interface IQueueContactDataReturn extends Document {
   created_at: number;
   updated_at: null | number;
   __v?: number;
+}
+
+
+export interface ICreateQueueContactReport {
+  _id?: string;
+  api_key: string;
+  id_contact_data: number;
+  id_load: number;
+  id_flow: string;
+  id_item: string;
+  schedule: Date;
+  event_type: 'SMS' | 'HSM' | 'Email';
+  data_type: 'cellular' | 'landline' | 'email';
+  contact_data: string;
+  state: 'pending' | 'waiting' | 'done' | 'error';
+  created_at: Date;
+  updated_at: null | Date;
+}
+
+
+
+export interface IUpdateQueueContactReport {
+  _id?: string;
+  api_key?: string;
+  id_contact_data?: number;
+  id_load?: number;
+  id_flow?: string;
+  id_item?: string;
+  schedule?: Date;
+  event_type?: 'SMS' | 'HSM' | 'Email';
+  data_type?: 'cellular' | 'landline' | 'email';
+  contact_data?: string;
+  state?: 'pending' | 'waiting' | 'done' | 'error';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+
+export interface IDeleteQueueContactReport {
+  _id?: string;
+  api_key?: string;
+  id_contact_data?: number;
+  id_load?: number;
+  id_flow?: string;
+  id_item?: string;
+  schedule?: Date;
+  event_type?: 'SMS' | 'HSM' | 'Email';
+  data_type?: 'cellular' | 'landline' | 'email';
+  contact_data?: string;
+  state?: 'pending' | 'waiting' | 'done' | 'error';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+export interface IGetQueueContactReport {
+  _id?: string;
+  api_key?: string;
+  id_contact_data?: number;
+  id_load?: number;
+  id_flow?: string;
+  id_item?: string;
+  schedule?: Date;
+  event_type?: 'SMS' | 'HSM' | 'Email';
+  data_type?: 'cellular' | 'landline' | 'email';
+  contact_data?: string;
+  state?: 'pending' | 'waiting' | 'done' | 'error';
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+
+
+
+export interface ICreateFlowReport {
+  _id?: string;
+  id_load: number;
+  api_key: string;
+  id_flow: string;
+  name: string;
+  id_item: string;
+  register: Date;
+  total: number;
+  pending: number;
+  waiting: number;
+  error: number;
+  response: number;
+  created_at: Date;
+  updated_at: null | Date;
+}
+
+
+
+export interface IUpdateFlowReport {
+  _id?: string;
+  id_load?: number;
+  api_key?: string;
+  id_flow?: string;
+  name?: string;
+  id_item?: string;
+  register?: Date;
+  total?: number;
+  pending?: number;
+  waiting?: number;
+  error?: number;
+  response?: number;
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+
+export interface IDeleteFlowReport {
+  _id?: string;
+  id_load?: number;
+  api_key?: string;
+  id_flow?: string;
+  name?: string;
+  id_item?: string;
+  register?: Date;
+  total?: number;
+  pending?: number;
+  waiting?: number;
+  error?: number;
+  response?: number;
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+export interface IGetFlowReport {
+  _id?: string;
+  id_load?: number;
+  api_key?: string;
+  id_flow?: string;
+  name?: string;
+  id_item?: string;
+  register?: Date;
+  total?: number;
+  pending?: number;
+  waiting?: number;
+  error?: number;
+  response?: number;
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+
+export interface ICreateFlowStatus {
+  _id?: string;
+  id_load: number;
+  api_key: string;
+  id_flow: string;
+  name: string;
+  id_item: string;
+  register: Date;
+  total: number;
+  sent: number;
+  delivered: number;
+  read: number;
+  answered: number;
+  created_at: Date;
+  updated_at: null | Date;
+}
+
+
+
+export interface IUpdateFlowStatus {
+  _id?: string;
+  id_load?: number;
+  api_key?: string;
+  id_flow?: string;
+  name?: string;
+  id_item?: string;
+  register?: Date;
+  total?: number;
+  sent?: number;
+  delivered?: number;
+  read?: number;
+  answered?: number;
+  created_at?: Date;
+  updated_at?: null | Date;
+  
+}
+
+
+
+export interface IDeleteFlowStatus {
+  _id?: string;
+  id_load?: number;
+  api_key?: string;
+  id_flow?: string;
+  name?: string;
+  id_item?: string;
+  register?: Date;
+  total?: number;
+  sent?: number;
+  delivered?: number;
+  read?: number;
+  answered?: number;
+  created_at?: Date;
+  updated_at?: null | Date;
+}
+
+
+export interface IGetFlowStatus {
+  _id?: string;
+  id_load?: number;
+  api_key?: string;
+  id_flow?: string;
+  name?: string;
+  id_item?: string;
+  register?: Date;
+  total?: number;
+  sent?: number;
+  delivered?: number;
+  read?: number;
+  answered?: number;
+  created_at?: Date;
+  updated_at?: null | Date;
 }
