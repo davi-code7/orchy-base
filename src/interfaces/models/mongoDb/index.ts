@@ -44,6 +44,7 @@ export interface ILoadInfo extends Document {
   schedule?: Date;
   contacts?: number;
   telephones?: number;
+  active: Boolean;
   emails?: number;
   telephones_ddd?: {
     ddd?: number;
@@ -51,6 +52,7 @@ export interface ILoadInfo extends Document {
   }[];
   created_at?: Date;
   updated_at?: null | Date;
+  id_org: string;
 }
 
 export interface ILoadStatus extends Document {
@@ -67,6 +69,7 @@ export interface ILoadStatus extends Document {
   contact_processed: number;
   telephone_processed: number;
   email_processed: number;
+  active: Boolean;
   created_at: Date;
   updated_at: null | Date;
 }
@@ -80,6 +83,7 @@ export interface IQueueContact extends Document {
   id_item?: string;
   schedule?: Date;
   contact?: {
+    id?: string;
     name?: string;
     cpf?: string;
     complement?: {

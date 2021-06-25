@@ -287,6 +287,10 @@ export interface ICreateContactComplement {
   updated_at: null | Date;
 }
 
+
+// MongoDB
+
+
 export interface IUpdateContactComplement {
   id_contact_complement?: BigInt;
   id_contact?: BigInt;
@@ -331,6 +335,7 @@ export interface IUpdateLoadInfo {
   api_key?: string;
   start?: Date;
   finish?: Date;
+  active?: Boolean;
   schedule?: Date;
   contacts?: number;
   telephones?: number;
@@ -355,6 +360,7 @@ export interface IDeleteLoadInfo {
   contacts?: number;
   telephones?: number;
   emails?: number;
+  active?: Boolean;
   telephones_ddd?: {
     ddd?: number;
     quantity?: number;
@@ -369,6 +375,7 @@ export interface IGetLoadInfo {
   id_flow?: string;
   id_load?: number;
   api_key?: string;
+  active?: Boolean;
   start?: Date;
   finish?: Date;
   schedule?: Date;
@@ -396,6 +403,7 @@ export interface ILoadInfoReturn extends Document {
   telephones: string;
   telephones_ddd: string[];
   email: string;
+  active: Boolean;
   created_at: number;
   updated_at: null | number;
   __v?: number;
@@ -409,6 +417,7 @@ export interface ICreateLoadStatus {
   start?: Date;
   finish?: Date;
   total?: number;
+  active?: Boolean;
   contact_total?: number;
   telephone_total?: number;
   email_total?: number;
@@ -427,6 +436,7 @@ export interface IUpdateLoadStatus {
   start?: Date;
   finish?: Date;
   total?: number;
+  active?: Boolean;
   contact_total?: number;
   telephone_total?: number;
   email_total?: number;
@@ -444,6 +454,7 @@ export interface IDeleteLoadStatus {
   api_key?: string;
   start?: Date;
   finish?: Date;
+  active?: Boolean;
   total?: number;
   contact_total?: number;
   telephone_total?: number;
@@ -462,6 +473,7 @@ export interface IGetLoadStatus {
   api_key?: string;
   start?: Date;
   finish?: Date;
+  active?: Boolean;
   total?: number;
   contact_total?: number;
   telephone_total?: number;
@@ -635,19 +647,6 @@ export interface IGetQueueContact {
   }[];
   created_at?: number;
   updated_at?: null | number;
-}
-
-export interface IQueueContactDataReturn extends Document {
-  _id: string;
-  id_contact_data: number;
-  schedule: number;
-  event_type: string;
-  data_type: string;
-  contact_data: string;
-  status: number;
-  created_at: number;
-  updated_at: null | number;
-  __v?: number;
 }
 
 
