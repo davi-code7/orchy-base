@@ -347,7 +347,6 @@ export interface IUpdateLoadInfo {
   }[];
   created_at?: Date;
   updated_at?: null | Date;
-  __v?: number;
 }
 
 export interface IDeleteLoadInfo {
@@ -368,7 +367,6 @@ export interface IDeleteLoadInfo {
   }[];
   created_at?: Date;
   updated_at?: null | Date;
-  __v?: number;
 }
 
 export interface IGetLoadInfo {
@@ -393,21 +391,23 @@ export interface IGetLoadInfo {
 }
 
 export interface ILoadInfoReturn extends Document {
-  _id: string;
-  id_flow: string;
-  id_load: string;
-  id_org: string;
-  start: number;
-  finish: number;
-  schedule: number;
-  contacts: string;
-  telephones: string;
-  telephones_ddd: string[];
-  email: string;
-  active: Boolean;
-  created_at: number;
-  updated_at: null | number;
-  __v?: number;
+  _id?: string;
+  id_flow?: string;
+  id_load?: number;
+  api_key?: string;
+  active?: Boolean;
+  start?: Date;
+  finish?: Date;
+  schedule?: Date;
+  contacts?: number;
+  telephones?: number;
+  emails?: number;
+  telephones_ddd?: {
+    ddd?: number;
+    quantity?: number;
+  }[];
+  created_at?: Date;
+  updated_at?: null | Date;
 }
 
 // Load Status
@@ -417,8 +417,8 @@ export interface ICreateLoadStatus {
   api_key?: string;
   start?: Date;
   finish?: Date;
-  total?: number;
   active?: Boolean;
+  total?: number;
   contact_total?: number;
   telephone_total?: number;
   email_total?: number;
@@ -436,8 +436,8 @@ export interface IUpdateLoadStatus {
   api_key?: string;
   start?: Date;
   finish?: Date;
-  total?: number;
   active?: Boolean;
+  total?: number;
   contact_total?: number;
   telephone_total?: number;
   email_total?: number;

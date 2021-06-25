@@ -52,7 +52,6 @@ export interface ILoadInfo extends Document {
   }[];
   created_at?: Date;
   updated_at?: null | Date;
-  id_org: string;
 }
 
 export interface ILoadStatus extends Document {
