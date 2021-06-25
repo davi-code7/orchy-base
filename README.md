@@ -37,9 +37,9 @@ createLoad() returns a object with created information
 
 ```javascript
 const newLoad = await orchyBase.createLoad({
-  id_flow: STRING
   id_load: BIGINT,
-  id_org: STRING,
+  id_flow: STRING
+  api_key: STRING,
   register: NUMBER,
   active: BOOLEAN,
   created_at: DATE,
@@ -93,7 +93,7 @@ createLoadInfo() returns a object with created information
 const newLoadInfo = await orchyBase.createLoadInfo({
   id_flow: STRING,
   id_load: STRING,
-  id_org: STRING,
+  api_key: STRING,
   start: DATE,
   finish: DATE,
   schedule: DATE,
@@ -112,7 +112,7 @@ createLoadStatus() returns a object with created information
 const newLoadStatus = await orchyBase.createLoadStatus({
   id_flow: STRING;
   id_load: STRING;
-  id_org: STRING;
+  api_key: STRING;
   start: DATE;
   finish: DATE;
   total: STRING;
