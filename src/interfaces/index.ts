@@ -317,6 +317,7 @@ export interface ICreateLoadInfo {
   start?: Date;
   finish?: Date;
   schedule?: Date;
+  active?: Boolean;
   contacts?: number;
   telephones?: number;
   emails?: number;
