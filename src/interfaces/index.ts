@@ -1,6 +1,18 @@
 import { Document } from 'mongoose';
 
 // Postgres
+// Load
+export interface ICreateLoad {
+  id_load?: BigInt;
+  id_flow: string;
+  api_key: string;
+  register: Date;
+  active: boolean;
+  file_eTag: String;
+  created_at: Date;
+  updated_at: null | Date;
+}
+
 // Queue
 export interface ICreateQueue {
   id_queue?: BigInt;
@@ -77,22 +89,13 @@ export interface IQueueReturn {
 }
 
 // Load
-export interface ICreateLoad {
-  id_load?: BigInt;
-  id_flow: string;
-  api_key: string;
-  register: Date;
-  active: boolean;
-  created_at: Date;
-  updated_at: null | Date;
-}
-
 export interface IUpdateLoad {
   id_load?: BigInt;
   id_flow?: string;
   api_key?: string;
   register?: Date;
   active?: boolean;
+  file_eTag?: String;
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -103,6 +106,7 @@ export interface IDeleteLoad {
   api_key?: string;
   register?: Date;
   active?: boolean;
+  file_eTag?: String;
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -113,6 +117,7 @@ export interface IGetLoad {
   api_key?: string;
   register?: Date;
   active?: boolean;
+  file_eTag?: String;
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -123,6 +128,7 @@ export interface ILoadReturn {
   api_key: string;
   register: Date;
   active: boolean;
+  file_eTag: String;
   created_at: Date;
   updated_at: null | Date;
   queue: ICreateQueue;
@@ -287,9 +293,7 @@ export interface ICreateContactComplement {
   updated_at: null | Date;
 }
 
-
 // MongoDB
-
 
 export interface IUpdateContactComplement {
   id_contact_complement?: BigInt;
@@ -650,7 +654,6 @@ export interface IGetQueueContact {
   updated_at?: null | number;
 }
 
-
 export interface ICreateQueueContactReport {
   _id?: string;
   api_key: string;
@@ -666,8 +669,6 @@ export interface ICreateQueueContactReport {
   created_at: Date;
   updated_at: null | Date;
 }
-
-
 
 export interface IUpdateQueueContactReport {
   _id?: string;
@@ -685,8 +686,6 @@ export interface IUpdateQueueContactReport {
   updated_at?: null | Date;
 }
 
-
-
 export interface IDeleteQueueContactReport {
   _id?: string;
   api_key?: string;
@@ -703,7 +702,6 @@ export interface IDeleteQueueContactReport {
   updated_at?: null | Date;
 }
 
-
 export interface IGetQueueContactReport {
   _id?: string;
   api_key?: string;
@@ -719,10 +717,6 @@ export interface IGetQueueContactReport {
   created_at?: Date;
   updated_at?: null | Date;
 }
-
-
-
-
 
 export interface ICreateFlowReport {
   _id?: string;
@@ -741,8 +735,6 @@ export interface ICreateFlowReport {
   updated_at: null | Date;
 }
 
-
-
 export interface IUpdateFlowReport {
   _id?: string;
   id_load?: number;
@@ -759,8 +751,6 @@ export interface IUpdateFlowReport {
   created_at?: Date;
   updated_at?: null | Date;
 }
-
-
 
 export interface IDeleteFlowReport {
   _id?: string;
@@ -779,7 +769,6 @@ export interface IDeleteFlowReport {
   updated_at?: null | Date;
 }
 
-
 export interface IGetFlowReport {
   _id?: string;
   id_load?: number;
@@ -796,8 +785,6 @@ export interface IGetFlowReport {
   created_at?: Date;
   updated_at?: null | Date;
 }
-
-
 
 export interface ICreateFlowStatus {
   _id?: string;
@@ -816,8 +803,6 @@ export interface ICreateFlowStatus {
   updated_at: null | Date;
 }
 
-
-
 export interface IUpdateFlowStatus {
   _id?: string;
   id_load?: number;
@@ -833,10 +818,7 @@ export interface IUpdateFlowStatus {
   answered?: number;
   created_at?: Date;
   updated_at?: null | Date;
-  
 }
-
-
 
 export interface IDeleteFlowStatus {
   _id?: string;
@@ -854,7 +836,6 @@ export interface IDeleteFlowStatus {
   created_at?: Date;
   updated_at?: null | Date;
 }
-
 
 export interface IGetFlowStatus {
   _id?: string;
