@@ -8,7 +8,7 @@ export interface ICreateLoad {
   api_key: string;
   register: Date;
   active: boolean;
-  file_eTag: String;
+  file_etag: String;
   created_at: Date;
   updated_at: null | Date;
 }
@@ -95,7 +95,7 @@ export interface IUpdateLoad {
   api_key?: string;
   register?: Date;
   active?: boolean;
-  file_eTag?: String;
+  file_etag?: String;
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -106,7 +106,7 @@ export interface IDeleteLoad {
   api_key?: string;
   register?: Date;
   active?: boolean;
-  file_eTag?: String;
+  file_etag?: String;
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -117,7 +117,7 @@ export interface IGetLoad {
   api_key?: string;
   register?: Date;
   active?: boolean;
-  file_eTag?: String;
+  file_etag?: String;
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -128,7 +128,7 @@ export interface ILoadReturn {
   api_key: string;
   register: Date;
   active: boolean;
-  file_eTag: String;
+  file_etag: String;
   created_at: Date;
   updated_at: null | Date;
   queue: ICreateQueue;

@@ -31,7 +31,7 @@ class Load extends Model {
           allowNull: false,
           unique: false,
         },
-        file_eTag: {
+        file_etag: {
           type: String,
           allowNull: false,
           unique: false,
