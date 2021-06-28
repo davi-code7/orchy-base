@@ -31,6 +31,11 @@ class Load extends Model {
           allowNull: false,
           unique: false,
         },
+        file_eTag: {
+          type: String,
+          allowNull: false,
+          unique: false,
+        },
         created_at: {
           type: DataTypes.DATE,
           allowNull: false,

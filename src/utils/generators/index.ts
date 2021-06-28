@@ -53,8 +53,11 @@ export function generateUpdateLoadObject(
   if (loadDataToUpdate.id_flow) {
     toUpdateData.id_flow = loadDataToUpdate.id_flow;
   }
-  if (loadDataToUpdate.id_org) {
-    toUpdateData.id_org = loadDataToUpdate.id_org;
+  if (loadDataToUpdate.api_key) {
+    toUpdateData.api_key = loadDataToUpdate.api_key;
+  }
+  if (loadDataToUpdate.file_eTag) {
+    toUpdateData.file_eTag = loadDataToUpdate.file_eTag;
   }
   if (loadDataToUpdate.updated_at === null || loadDataToUpdate.updated_at) {
     toUpdateData.updated_at = loadDataToUpdate.updated_at;
