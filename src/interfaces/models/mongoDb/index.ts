@@ -82,7 +82,7 @@ export interface IQueueContact extends Document {
   id_item?: string;
   schedule?: Date;
   contact?: {
-    id?: string;
+    id_contact?: string;
     name?: string;
     cpf?: string;
     complement?: {

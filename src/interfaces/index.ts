@@ -499,7 +499,7 @@ export interface ICreateQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
-    id?: string;
+    id_contact?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -540,7 +540,7 @@ export interface IUpdateQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
-    id?: string;
+    id_contact?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -581,7 +581,7 @@ export interface IDeleteQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
-    id?: string;
+    id_contact?: string;
     name?: string;
     cpf?: string;
     complement?: {
@@ -622,7 +622,7 @@ export interface IGetQueueContact {
   id_item?: string;
   schedule?: Date;
   contact?: {
-    id?: string;
+    id_contact?: string;
     name?: string;
     cpf?: string;
     complement?: {
