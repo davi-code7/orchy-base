@@ -89,7 +89,7 @@ export interface IQueueContact extends Document {
       field?: string;
       value?: string;
     }[];
-  }[];
+  };
   event_type?: 'SMS' | 'HSM' | 'Email';
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
@@ -126,6 +126,14 @@ export interface IQueueContactReport extends Document {
   data_type: 'cellular' | 'landline' | 'email';
   contact_data: string;
   state: 'pending' | 'waiting' | 'done' | 'error';
+  message: String;
+  sent: Date;
+  conditions_meet: {
+    context: String;
+    operator: String;
+    value: String;
+    destination: String;
+  }[]; 
   created_at: Date;
   updated_at: null | Date;
 }
