@@ -26,8 +26,8 @@ const QueueContactSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  contact: [
-    {
+  contact: {
+    
       id_contact: {
         type: String,
         required: true,
@@ -52,8 +52,7 @@ const QueueContactSchema = new mongoose.Schema({
           },
         },
       ],
-    },
-  ],
+  },
   event_type: {
     type: String,
     enum: ['SMS', 'HSM', 'Email'],
