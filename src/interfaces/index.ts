@@ -191,7 +191,7 @@ export interface IContactPhoneGetData {
   area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
-  state?: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at?: Date;
   updated_at?: null | Date;
   contact: ICreateContact;
@@ -201,7 +201,7 @@ export interface IContactEmailGetData {
   id_contact_email?: BigInt;
   id_contact?: BigInt;
   contact_data?: string;
-  state?: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at?: Date;
   updated_at?: null | Date;
   contact: ICreateContact;
@@ -226,7 +226,7 @@ export interface ICreateContactEmail {
   id_contact_email?: BigInt;
   id_contact: BigInt;
   contact_data: string;
-  state: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at: Date;
   updated_at: null | Date;
 }
@@ -235,7 +235,7 @@ export interface IUpdateContactEmail {
   id_contact_email?: BigInt;
   id_contact?: BigInt;
   contact_data?: string;
-  state?: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -244,7 +244,7 @@ export interface IDeleteContactEmail {
   id_contact_email?: BigInt;
   id_contact?: BigInt;
   contact_data?: string;
-  state?: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -256,7 +256,7 @@ export interface ICreateContactPhone {
   area_code?: BigInt;
   data_type: 'cellular' | 'landline';
   contact_data: string;
-  state: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at: Date;
   updated_at: null | Date;
 }
@@ -267,7 +267,7 @@ export interface IUpdateContactPhone {
   area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
-  state?: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -278,7 +278,7 @@ export interface IDeleteContactPhone {
   area_code?: BigInt;
   data_type?: 'cellular' | 'landline';
   contact_data?: string;
-  state?: 'pending' | 'working' | 'done';
+  state?: 'pending' | 'sent' | 'failed';
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -506,7 +506,7 @@ export interface ICreateQueueContact {
       field?: string;
       value?: string;
     }[];
-  }[];
+  };
   event_type?: 'SMS' | 'HSM' | 'Email';
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
@@ -547,7 +547,7 @@ export interface IUpdateQueueContact {
       field?: string;
       value?: string;
     }[];
-  }[];
+  };
   event_type?: 'SMS' | 'HSM' | 'Email';
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
@@ -588,7 +588,7 @@ export interface IDeleteQueueContact {
       field?: string;
       value?: string;
     }[];
-  }[];
+  };
   event_type?: 'SMS' | 'HSM' | 'Email';
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
@@ -629,7 +629,7 @@ export interface IGetQueueContact {
       field?: string;
       value?: string;
     }[];
-  }[];
+  };
   event_type?: 'SMS' | 'HSM' | 'Email';
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
@@ -655,7 +655,6 @@ export interface IGetQueueContact {
 }
 
 export interface ICreateQueueContactReport {
-  _id?: string;
   api_key: string;
   id_contact_data: number;
   id_load: number;
@@ -666,6 +665,14 @@ export interface ICreateQueueContactReport {
   data_type: 'cellular' | 'landline' | 'email';
   contact_data: string;
   state: 'pending' | 'waiting' | 'done' | 'error';
+  message: String;
+  sent: Date;
+  conditions_meet: {
+    context: String;
+    operator: String;
+    value: String;
+    destination: String;
+  }[]; 
   created_at: Date;
   updated_at: null | Date;
 }
@@ -682,6 +689,14 @@ export interface IUpdateQueueContactReport {
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
   state?: 'pending' | 'waiting' | 'done' | 'error';
+  message: String;
+  sent: Date;
+  conditions_meet: {
+    context: String;
+    operator: String;
+    value: String;
+    destination: String;
+  }[]; 
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -698,6 +713,14 @@ export interface IDeleteQueueContactReport {
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
   state?: 'pending' | 'waiting' | 'done' | 'error';
+  message: String;
+  sent: Date;
+  conditions_meet: {
+    context: String;
+    operator: String;
+    value: String;
+    destination: String;
+  }[]; 
   created_at?: Date;
   updated_at?: null | Date;
 }
@@ -714,6 +737,14 @@ export interface IGetQueueContactReport {
   data_type?: 'cellular' | 'landline' | 'email';
   contact_data?: string;
   state?: 'pending' | 'waiting' | 'done' | 'error';
+  message: String;
+  sent: Date;
+  conditions_meet: {
+    context: String;
+    operator: String;
+    value: String;
+    destination: String;
+  }[]; 
   created_at?: Date;
   updated_at?: null | Date;
 }
