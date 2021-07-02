@@ -992,7 +992,7 @@ export default class OrchyBase {
     loadStatusDataToUpdate: IUpdateLoadStatus,
   ): Promise<IUpdateLoadStatus | null> {
     try {
-      const updatedLoadStatus: IUpdateLoadStatus = await LoadInfo.findOneAndUpdate(
+      const updatedLoadStatus: IUpdateLoadStatus = await LoadStatus.findOneAndUpdate(
         where,
         loadStatusDataToUpdate,
         { runValidators: true },
@@ -1026,7 +1026,7 @@ export default class OrchyBase {
     where: FilterQuery<IGetLoadStatus>,
   ): Promise<IGetLoadStatus> {
     try {
-      const loadStatus: IGetLoadStatus = await LoadInfo.findOne(where);
+      const loadStatus: IGetLoadStatus = await LoadStatus.findOne(where);
 
       this.loadStatus = loadStatus;
     } catch (err) {
@@ -1045,14 +1045,14 @@ export default class OrchyBase {
 
       if (limit) {
         if (!where) {
-          loadStatusesData = await LoadInfo.find().limit(limit);
+          loadStatusesData = await LoadStatus.find().limit(limit);
         } else {
-          loadStatusesData = await LoadInfo.find(where).limit(limit);
+          loadStatusesData = await LoadStatus.find(where).limit(limit);
         }
       } else if (!where) {
-        loadStatusesData = await LoadInfo.find();
+        loadStatusesData = await LoadStatus.find();
       } else {
-        loadStatusesData = await LoadInfo.find(where);
+        loadStatusesData = await LoadStatus.find(where);
       }
 
       this.loadStatus = loadStatusesData;
