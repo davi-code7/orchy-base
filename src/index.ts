@@ -2,9 +2,9 @@ import 'dotenv/config';
 import './database';
 import { exec } from 'child_process';
 import { QueryTypes } from 'sequelize';
-import  sequelize  from './config/database/postgres/index';
 import { WhereOptions } from 'sequelize/types';
 import { FilterQuery } from 'mongoose';
+import sequelize from './config/database/postgres/index';
 
 import { connectMongoDB } from './config/database/mongoDb/index';
 
@@ -22,10 +22,8 @@ import QueueContactReport from './models/mongoDb/QueueContactReport/QueueContact
 import FlowReport from './models/mongoDb/FlowReport/FlowReport';
 import FlowStatus from './models/mongoDb/FlowStatus/FlowStatus';
 
-
-
 import {
-   ICreateQueue,
+  ICreateQueue,
   IUpdateQueue,
   IDeleteQueue,
   IGetQueue,
@@ -64,23 +62,18 @@ import {
   IUpdateQueueContact,
   IDeleteQueueContact,
   IGetQueueContact,
-
   ICreateFlowReport,
   IUpdateFlowReport,
   IDeleteFlowReport,
   IGetFlowReport,
-
   ICreateQueueContactReport,
   IUpdateQueueContactReport,
   IDeleteQueueContactReport,
   IGetQueueContactReport,
-
   ICreateFlowStatus,
   IUpdateFlowStatus,
   IDeleteFlowStatus,
   IGetFlowStatus,
-
-
 } from './interfaces/index';
 
 export default class OrchyBase {
@@ -134,20 +127,18 @@ export default class OrchyBase {
   private deletedQueueContactReport: IDeleteQueueContactReport | null;
   private queueContactReports: IGetQueueContactReport[];
 
-
   private flowReport: ICreateFlowReport;
   private updatedFlowReport: IUpdateFlowReport | null;
   private deletedFlowReport: IDeleteFlowReport | null;
   private flowReports: IGetFlowReport[];
 
-
   private flowStatus: ICreateFlowStatus;
   private updatedFlowStatus: IUpdateFlowStatus | null;
   private deletedFlowStatus: IDeleteFlowStatus | null;
   private flowsStatus: IGetFlowStatus[];
-  
+
   private querySequelizeResponse;
-  
+
   constructor(mongoDB: boolean) {
     if (mongoDB) {
       connectMongoDB();
@@ -411,11 +402,10 @@ export default class OrchyBase {
     where: WhereOptions<IDeleteContactComplement>,
   ): Promise<number> {
     try {
-      const destroyedContactsComplement: number = await ContactComplement.destroy(
-        {
+      const destroyedContactsComplement: number =
+        await ContactComplement.destroy({
           where,
-        },
-      );
+        });
 
       this.deletedContactsComplement = destroyedContactsComplement;
     } catch (err) {
@@ -478,14 +468,13 @@ export default class OrchyBase {
         });
       }
 
-      const mapedContactsComplement: IContactComplementGetData[] = contactsComplement.map(
-        (contactComplement) => ({
+      const mapedContactsComplement: IContactComplementGetData[] =
+        contactsComplement.map((contactComplement) => ({
           ...contactComplement.get(),
           contact: contactComplement.get().contact
             ? contactComplement.get().contact.get()
             : null,
-        }),
-      );
+        }));
 
       this.contactsComplement = mapedContactsComplement;
     } catch (err) {
@@ -992,11 +981,10 @@ export default class OrchyBase {
     loadStatusDataToUpdate: IUpdateLoadStatus,
   ): Promise<IUpdateLoadStatus | null> {
     try {
-      const updatedLoadStatus: IUpdateLoadStatus = await LoadStatus.findOneAndUpdate(
-        where,
-        loadStatusDataToUpdate,
-        { runValidators: true },
-      );
+      const updatedLoadStatus: IUpdateLoadStatus =
+        await LoadStatus.findOneAndUpdate(where, loadStatusDataToUpdate, {
+          runValidators: true,
+        });
 
       this.updatedLoadStatus = updatedLoadStatus;
     } catch (err) {
@@ -1010,9 +998,8 @@ export default class OrchyBase {
     where: FilterQuery<IDeleteLoadStatus>,
   ): Promise<IDeleteLoadStatus | null> {
     try {
-      const destroyedLoadStatus: IDeleteLoadStatus = await LoadStatus.findOneAndDelete(
-        where,
-      );
+      const destroyedLoadStatus: IDeleteLoadStatus =
+        await LoadStatus.findOneAndDelete(where);
 
       this.deletedLoadStatus = destroyedLoadStatus;
     } catch (err) {
@@ -1068,12 +1055,11 @@ export default class OrchyBase {
   async countQueueContacts(
     where?: FilterQuery<IGetQueueContact>,
   ): Promise<IGetQueueContact[]> {
-
     let amountQueueContact = null;
     try {
       if (!where) {
         amountQueueContact = await QueueContact.countDocuments();
-      }else{
+      } else {
         amountQueueContact = await QueueContact.countDocuments(where);
       }
     } catch (err) {
@@ -1082,9 +1068,6 @@ export default class OrchyBase {
 
     return amountQueueContact;
   }
-
-
-
 
   async createQueueContact(
     queueContactData: ICreateQueueContact,
@@ -1104,11 +1087,10 @@ export default class OrchyBase {
     queueContactDataToUpdate: IUpdateQueueContact,
   ): Promise<IUpdateQueueContact> {
     try {
-      const updatedQueueContact: IUpdateQueueContact = await QueueContact.findOneAndUpdate(
-        where,
-        queueContactDataToUpdate,
-        { runValidators: true },
-      );
+      const updatedQueueContact: IUpdateQueueContact =
+        await QueueContact.findOneAndUpdate(where, queueContactDataToUpdate, {
+          runValidators: true,
+        });
 
       this.updatedQueueContact = updatedQueueContact;
     } catch (err) {
@@ -1122,9 +1104,8 @@ export default class OrchyBase {
     where: FilterQuery<IDeleteQueueContact>,
   ): Promise<IDeleteQueueContact> {
     try {
-      const destroyedQueueContact: IDeleteQueueContact = await QueueContact.findOneAndDelete(
-        where,
-      );
+      const destroyedQueueContact: IDeleteQueueContact =
+        await QueueContact.findOneAndDelete(where);
 
       this.deletedQueueContact = destroyedQueueContact;
     } catch (err) {
@@ -1175,15 +1156,14 @@ export default class OrchyBase {
     return this.queueContacts;
   }
 
-
-
-
   // Queue Contact Report methods
   async createQueueContactReport(
     queueContactReportData: ICreateQueueContactReport,
   ): Promise<ICreateQueueContactReport> {
     try {
-      const newQueueContactReport = new QueueContactReport(queueContactReportData);
+      const newQueueContactReport = new QueueContactReport(
+        queueContactReportData,
+      );
 
       this.queueContactReport = await newQueueContactReport.save();
     } catch (err) {
@@ -1192,17 +1172,17 @@ export default class OrchyBase {
     return this.queueContactReport;
   }
 
-
   async updateQueueContactReport(
     where: FilterQuery<IUpdateQueueContactReport>,
     queueContactReportDataToUpdate: IUpdateQueueContactReport,
   ): Promise<IUpdateQueueContactReport> {
     try {
-      const updatedQueueContactReport: IUpdateQueueContactReport = await QueueContactReport.findOneAndUpdate(
-        where,
-        queueContactReportDataToUpdate,
-        { runValidators: true },
-      );
+      const updatedQueueContactReport: IUpdateQueueContactReport =
+        await QueueContactReport.findOneAndUpdate(
+          where,
+          queueContactReportDataToUpdate,
+          { runValidators: true },
+        );
 
       this.updatedQueueContactReport = updatedQueueContactReport;
     } catch (err) {
@@ -1216,9 +1196,8 @@ export default class OrchyBase {
     where: FilterQuery<IDeleteQueueContactReport>,
   ): Promise<IDeleteQueueContactReport> {
     try {
-      const destroyedQueueContactReport: IDeleteQueueContactReport = await QueueContactReport.findOneAndDelete(
-        where,
-      );
+      const destroyedQueueContactReport: IDeleteQueueContactReport =
+        await QueueContactReport.findOneAndDelete(where);
 
       this.deletedQueueContactReport = destroyedQueueContactReport;
     } catch (err) {
@@ -1251,9 +1230,13 @@ export default class OrchyBase {
 
       if (limit) {
         if (!where) {
-          queueContactReportsData = await QueueContactReport.find().limit(limit);
+          queueContactReportsData = await QueueContactReport.find().limit(
+            limit,
+          );
         } else {
-          queueContactReportsData = await QueueContactReport.find(where).limit(limit);
+          queueContactReportsData = await QueueContactReport.find(where).limit(
+            limit,
+          );
         }
       } else if (!where) {
         queueContactReportsData = await QueueContactReport.find();
@@ -1269,9 +1252,8 @@ export default class OrchyBase {
     return this.queueContactReports;
   }
 
-
-   // Flow Report methods
-   async createFlowReport(
+  // Flow Report methods
+  async createFlowReport(
     flowReportData: ICreateFlowReport,
   ): Promise<ICreateFlowReport> {
     try {
@@ -1284,17 +1266,15 @@ export default class OrchyBase {
     return this.flowReport;
   }
 
-
   async updateFlowReport(
     where: FilterQuery<IUpdateFlowReport>,
     flowReportDataToUpdate: IUpdateFlowReport,
   ): Promise<IUpdateFlowReport> {
     try {
-      const updatedFlowReport: IUpdateFlowReport = await FlowReport.findOneAndUpdate(
-        where,
-        flowReportDataToUpdate,
-        { runValidators: true },
-      );
+      const updatedFlowReport: IUpdateFlowReport =
+        await FlowReport.findOneAndUpdate(where, flowReportDataToUpdate, {
+          runValidators: true,
+        });
 
       this.updatedFlowReport = updatedFlowReport;
     } catch (err) {
@@ -1308,9 +1288,8 @@ export default class OrchyBase {
     where: FilterQuery<IDeleteFlowReport>,
   ): Promise<IDeleteFlowReport> {
     try {
-      const destroyedFlowReport: IDeleteFlowReport = await FlowReport.findOneAndDelete(
-        where,
-      );
+      const destroyedFlowReport: IDeleteFlowReport =
+        await FlowReport.findOneAndDelete(where);
 
       this.deletedFlowReport = destroyedFlowReport;
     } catch (err) {
@@ -1320,9 +1299,7 @@ export default class OrchyBase {
     return this.deletedFlowReport;
   }
 
-  async getFlowReport(
-    where: ICreateFlowReport,
-  ): Promise<ICreateFlowReport> {
+  async getFlowReport(where: ICreateFlowReport): Promise<ICreateFlowReport> {
     try {
       const flowReport = await FlowReport.findOne(where);
 
@@ -1337,20 +1314,23 @@ export default class OrchyBase {
   async getFlowReports(
     limit: number | null,
     where?: FilterQuery<IGetFlowReport>,
+    sort?: string,
   ): Promise<IGetFlowReport[]> {
     try {
       let flowReportsData: any;
 
+      const fWhere = where || {};
+
       if (limit) {
-        if (!where) {
-          flowReportsData = await FlowReport.find().limit(limit);
+        if (sort) {
+          flowReportsData = await FlowReport.find(fWhere)
+            .limit(limit)
+            .sort(sort);
         } else {
-          flowReportsData = await FlowReport.find(where).limit(limit);
+          flowReportsData = await FlowReport.find(fWhere).limit(limit);
         }
-      } else if (!where) {
-        flowReportsData = await FlowReport.find();
       } else {
-        flowReportsData = await FlowReport.find(where);
+        flowReportsData = await FlowReport.find(fWhere).sort(sort);
       }
 
       this.flowReports = flowReportsData;
@@ -1361,112 +1341,101 @@ export default class OrchyBase {
     return this.flowReports;
   }
 
+  // Flow Status methods
+  async createFlowStatus(
+    flowStatusData: ICreateFlowStatus,
+  ): Promise<ICreateFlowStatus> {
+    try {
+      const newFlowStatus = new FlowStatus(flowStatusData);
 
+      this.flowStatus = await newFlowStatus.save();
+    } catch (err) {
+      throw Error(err);
+    }
+    return this.flowStatus;
+  }
 
-     // Flow Status methods
-     async createFlowStatus(
-      flowStatusData: ICreateFlowStatus,
-    ): Promise<ICreateFlowStatus> {
-      try {
-        const newFlowStatus = new FlowStatus(flowStatusData);
-  
-        this.flowStatus = await newFlowStatus.save();
-      } catch (err) {
-        throw Error(err);
-      }
-      return this.flowStatus;
+  async updateFlowStatus(
+    where: FilterQuery<IUpdateFlowStatus>,
+    flowStatusDataToUpdate: IUpdateFlowStatus,
+  ): Promise<IUpdateFlowStatus> {
+    try {
+      const updatedFlowStatus: IUpdateFlowStatus =
+        await FlowStatus.findOneAndUpdate(where, flowStatusDataToUpdate, {
+          runValidators: true,
+        });
+
+      this.updatedFlowStatus = updatedFlowStatus;
+    } catch (err) {
+      throw Error(err);
     }
-  
-  
-    async updateFlowStatus(
-      where: FilterQuery<IUpdateFlowStatus>,
-      flowStatusDataToUpdate: IUpdateFlowStatus,
-    ): Promise<IUpdateFlowStatus> {
-      try {
-        const updatedFlowStatus: IUpdateFlowStatus = await FlowStatus.findOneAndUpdate(
-          where,
-          flowStatusDataToUpdate,
-          { runValidators: true },
-        );
-  
-        this.updatedFlowStatus = updatedFlowStatus;
-      } catch (err) {
-        throw Error(err);
-      }
-  
-      return this.updatedFlowStatus;
+
+    return this.updatedFlowStatus;
+  }
+
+  async deleteFlowStatus(
+    where: FilterQuery<IDeleteFlowStatus>,
+  ): Promise<IDeleteFlowStatus> {
+    try {
+      const destroyedFlowStatus: IDeleteFlowStatus =
+        await FlowStatus.findOneAndDelete(where);
+
+      this.deletedFlowStatus = destroyedFlowStatus;
+    } catch (err) {
+      throw Error(err);
     }
-  
-    async deleteFlowStatus(
-      where: FilterQuery<IDeleteFlowStatus>,
-    ): Promise<IDeleteFlowStatus> {
-      try {
-        const destroyedFlowStatus: IDeleteFlowStatus = await FlowStatus.findOneAndDelete(
-          where,
-        );
-  
-        this.deletedFlowStatus = destroyedFlowStatus;
-      } catch (err) {
-        throw Error(err);
-      }
-  
-      return this.deletedFlowStatus;
+
+    return this.deletedFlowStatus;
+  }
+
+  async getFlowStatus(where: ICreateFlowStatus): Promise<ICreateFlowStatus> {
+    try {
+      const flowStatus = await FlowStatus.findOne(where);
+
+      this.flowStatus = flowStatus;
+    } catch (err) {
+      throw Error(err);
     }
-  
-    async getFlowStatus(
-      where: ICreateFlowStatus,
-    ): Promise<ICreateFlowStatus> {
-      try {
-        const flowStatus = await FlowStatus.findOne(where);
-  
-        this.flowStatus = flowStatus;
-      } catch (err) {
-        throw Error(err);
-      }
-  
-      return this.flowStatus;
-    }
-  
-    async getFlowsStatus(
-      limit: number | null,
-      where?: FilterQuery<IGetFlowStatus>,
-    ): Promise<IGetFlowStatus[]> {
-      try {
-        let flowsStatusData: any;
-  
-        if (limit) {
-          if (!where) {
-            flowsStatusData = await FlowStatus.find().limit(limit);
-          } else {
-            flowsStatusData = await FlowStatus.find(where).limit(limit);
-          }
-        } else if (!where) {
-          flowsStatusData = await FlowStatus.find();
+
+    return this.flowStatus;
+  }
+
+  async getFlowsStatus(
+    limit: number | null,
+    where?: FilterQuery<IGetFlowStatus>,
+  ): Promise<IGetFlowStatus[]> {
+    try {
+      let flowsStatusData: any;
+
+      if (limit) {
+        if (!where) {
+          flowsStatusData = await FlowStatus.find().limit(limit);
         } else {
-          flowsStatusData = await FlowStatus.find(where);
+          flowsStatusData = await FlowStatus.find(where).limit(limit);
         }
-  
-        this.flowsStatus = flowsStatusData;
-      } catch (err) {
-        throw Error(err);
+      } else if (!where) {
+        flowsStatusData = await FlowStatus.find();
+      } else {
+        flowsStatusData = await FlowStatus.find(where);
       }
-  
-      return this.flowsStatus;
+
+      this.flowsStatus = flowsStatusData;
+    } catch (err) {
+      throw Error(err);
     }
-    
-    
-  
-    async customQuerySequelize(query: string):Promise<any[]>{
 
-      try{
-        const queryResponse = await sequelize.query(query, { type: QueryTypes.SELECT });
-        this.querySequelizeResponse = queryResponse;
+    return this.flowsStatus;
+  }
 
-      }catch(err){
-        throw Error(err); 
-      }
-      return this.querySequelizeResponse;
+  async customQuerySequelize(query: string): Promise<any[]> {
+    try {
+      const queryResponse = await sequelize.query(query, {
+        type: QueryTypes.SELECT,
+      });
+      this.querySequelizeResponse = queryResponse;
+    } catch (err) {
+      throw Error(err);
     }
-   
-
+    return this.querySequelizeResponse;
+  }
 }
