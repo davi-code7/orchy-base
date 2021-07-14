@@ -138,10 +138,11 @@ export default class OrchyBase {
   private flowsStatus: IGetFlowStatus[];
 
   private querySequelizeResponse;
+  private connection;
 
   constructor(mongoDB: boolean) {
     if (mongoDB) {
-      connectMongoDB();
+      this.connection = connectMongoDB();
     }
   }
 
@@ -1197,7 +1198,9 @@ export default class OrchyBase {
   ): Promise<IDeleteQueueContactReport> {
     try {
       const destroyedQueueContactReport: IDeleteQueueContactReport =
-        await QueueContactReport.findOneAndDelete(where);
+      await QueueContactReport.findOneAndDelete(
+        where,
+      );
 
       this.deletedQueueContactReport = destroyedQueueContactReport;
     } catch (err) {
@@ -1360,10 +1363,11 @@ export default class OrchyBase {
     flowStatusDataToUpdate: IUpdateFlowStatus,
   ): Promise<IUpdateFlowStatus> {
     try {
-      const updatedFlowStatus: IUpdateFlowStatus =
-        await FlowStatus.findOneAndUpdate(where, flowStatusDataToUpdate, {
-          runValidators: true,
-        });
+      const updatedFlowStatus: IUpdateFlowStatus = await FlowStatus.findOneAndUpdate(
+        where,
+        flowStatusDataToUpdate,
+        { runValidators: true },
+      );
 
       this.updatedFlowStatus = updatedFlowStatus;
     } catch (err) {
@@ -1377,8 +1381,9 @@ export default class OrchyBase {
     where: FilterQuery<IDeleteFlowStatus>,
   ): Promise<IDeleteFlowStatus> {
     try {
-      const destroyedFlowStatus: IDeleteFlowStatus =
-        await FlowStatus.findOneAndDelete(where);
+      const destroyedFlowStatus: IDeleteFlowStatus = await FlowStatus.findOneAndDelete(
+        where,
+      );
 
       this.deletedFlowStatus = destroyedFlowStatus;
     } catch (err) {
@@ -1388,7 +1393,9 @@ export default class OrchyBase {
     return this.deletedFlowStatus;
   }
 
-  async getFlowStatus(where: ICreateFlowStatus): Promise<ICreateFlowStatus> {
+  async getFlowStatus(
+    where: ICreateFlowStatus,
+  ): Promise<ICreateFlowStatus> {
     try {
       const flowStatus = await FlowStatus.findOne(where);
 
@@ -1427,11 +1434,9 @@ export default class OrchyBase {
     return this.flowsStatus;
   }
 
-  async customQuerySequelize(query: string): Promise<any[]> {
+  async customQuerySequelize(query: string):Promise<any[]> {
     try {
-      const queryResponse = await sequelize.query(query, {
-        type: QueryTypes.SELECT,
-      });
+      const queryResponse = await sequelize.query(query, { type: QueryTypes.SELECT });
       this.querySequelizeResponse = queryResponse;
     } catch (err) {
       throw Error(err);

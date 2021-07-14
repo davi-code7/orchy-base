@@ -27,31 +27,31 @@ const QueueContactSchema = new mongoose.Schema({
     required: true,
   },
   contact: {
-    
-      id_contact: {
-        type: String,
-        required: true,
-      },
-      name: {
-        type: String,
-        required: true,
-      },
-      cpf: {
-        type: String,
-        required: true,
-      },
-      complement: [
-        {
-          field: {
-            type: String,
-            required: true,
-          },
-          value: {
-            type: String,
-            required: true,
-          },
+
+    id_contact: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    cpf: {
+      type: String,
+      required: true,
+    },
+    complement: [
+      {
+        field: {
+          type: String,
+          required: true,
         },
-      ],
+        value: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   event_type: {
     type: String,

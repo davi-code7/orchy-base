@@ -133,7 +133,13 @@ export interface IQueueContactReport extends Document {
     operator: String;
     value: String;
     destination: String;
-  }[]; 
+  }[];
   created_at: Date;
   updated_at: null | Date;
 }
+
+// export interface IQueueContactReport extends Document {
+
+//   created_at: Date;
+//   updated_at: null | Date;
+// }
